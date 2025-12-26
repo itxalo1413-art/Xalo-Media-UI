@@ -10,11 +10,29 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-digital-blue: #1E92F1;
+  --color-primary: #1E92F1;
+  --color-primary-foreground: #ffffff;
+  --color-warning: #f59e0b;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-float-delayed: float 3s ease-in-out 1s infinite;
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #f0f8ff;
     --foreground: #ededed;
   }
 }
