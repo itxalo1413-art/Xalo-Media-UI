@@ -66,7 +66,7 @@ const Footer = () => {
                         </ul>
                         <div className="inline-block px-4 py-2 border border-gray-800 rounded-lg">
                             <div className="flex items-center text-xs font-bold text-white/50 space-x-2">
-                                <img src="logobct.svg" alt="" />
+                                <img src="/logobct.svg" alt="" />
                             </div>
                         </div>
                     </div>

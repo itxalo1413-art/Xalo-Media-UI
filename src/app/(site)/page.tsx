@@ -7,18 +7,18 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-24 pb-20">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center bg-white overflow-hidden pt-20">
+      <section className="relative min-h-[70vh] flex items-center bg-white overflow-hidden pt-20">
         <Container>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-digital-blue/10 text-digital-blue text-sm font-bold tracking-tight mb-4 border border-digital-blue/10">
                 #1 Digital Marketing Agency in Vietnam
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
                 Deliver what you need,<br />
                 <span className="text-digital-blue">Achieve what you want</span>
               </h1>
-              <p className="text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 max-w-xl lg:max-w-2xl leading-relaxed">
                 Xa Lộ Media là đối tác tin cậy cung cấp các giải pháp marketing toàn diện, giúp thương hiệu của bạn tiếp cận đúng đối tượng khách hàng và đạt được mục tiêu kinh doanh.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -33,7 +33,7 @@ export default function Home() {
             </div>
 
             <div className="relative mt-12 md:mt-0">
-              <div className="relative h-[400px] md:h-[500px] rounded-[40px] bg-gray-100 overflow-hidden shadow-2xl border-8 border-white">
+              <div className="relative h-[400px] md:h-[450px] lg:h-[500px] rounded-[40px] bg-gray-100 overflow-hidden shadow-2xl border-8 border-white">
                 <img
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop"
                   alt="Hero Banner"
@@ -41,25 +41,25 @@ export default function Home() {
                 />
               </div>
 
-              {/* Floating Cards */}
-              <div className="absolute -bottom-8 -left-8 w-48 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-4 border border-white/50 animate-float hidden sm:block">
+              {/* Floating Cards - Adjusted for responsiveness */}
+              <div className="absolute -bottom-4 -left-4 md:-bottom-8 md:-left-8 w-40 md:w-48 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-4 border border-white/50 animate-float hidden sm:block">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-yellow-500/10 rounded-full">
-                    <svg className="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                  <div className="p-2 md:p-3 bg-yellow-500/10 rounded-full">
+                    <svg className="w-5 h-5 md:w-6 md:h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                   </div>
                   <div>
-                    <p className="font-black text-xl text-gray-900">+250%</p>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">ROI Average</p>
+                    <p className="font-black text-lg md:text-xl text-gray-900">+250%</p>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">ROI Average</p>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute -top-8 -right-8 w-52 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-4 border border-white/50 animate-float-delayed hidden sm:block">
+              <div className="absolute -top-4 -right-4 md:-top-8 md:-right-8 w-44 md:w-52 bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl p-4 border border-white/50 animate-float-delayed hidden sm:block">
                 <div className="flex items-center gap-3">
-                  <svg className="w-6 h-6 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  <svg className="w-5 h-5 md:w-6 md:h-6 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                   <div>
-                    <p className="font-black text-xl text-gray-900">4.9/5</p>
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Client Rating</p>
+                    <p className="font-black text-lg md:text-xl text-gray-900">4.9/5</p>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Client Rating</p>
                   </div>
                 </div>
               </div>
@@ -71,7 +71,7 @@ export default function Home() {
       {/* Stats Section */}
       <section className="py-12 bg-white relative z-10">
         <Container>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+          <div className="grid grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
             {[
               {
                 icon: (
@@ -114,7 +114,7 @@ export default function Home() {
                 bgColor: "bg-blue-50/50"
               }
             ].map((stat, idx) => (
-              <div key={idx} className={`p-8 md:p-12 rounded-[32px] ${stat.bgColor} border border-blue-100/20 text-center space-y-4 hover:shadow-xl hover:shadow-blue-500/5 transition-all group`}>
+              <div key={idx} className={`p-6 md:p-8 lg:p-10 rounded-[32px] ${stat.bgColor} border border-blue-100/20 text-center space-y-4 hover:shadow-xl hover:shadow-blue-500/5 transition-all group`}>
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto shadow-sm group-hover:scale-110 transition-transform">
                   {stat.icon}
                 </div>
@@ -141,7 +141,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
             {[
               {
                 title: "Influencer Marketing",
@@ -217,7 +217,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
             {[
               {
                 name: "Ninh Tito",
