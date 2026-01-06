@@ -2,19 +2,20 @@ import Link from 'next/link';
 import Container from '@/components/common/Container';
 import FAQ from '@/components/home/FAQ';
 import ContactSection from '@/components/home/ContactSection';
+import { KOLS } from '@/data/kols';
 
 export default function Home() {
   return (
     <div className="flex flex-col gap-24 pb-20">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center bg-white overflow-hidden pt-20">
+      <section className="relative min-h-[60vh] flex items-center overflow-hidden pt-20 pb-10">
         <Container>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-digital-blue/10 text-digital-blue text-sm font-bold tracking-tight mb-4 border border-digital-blue/10">
                 #1 Digital Marketing Agency in Vietnam
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight">
                 Deliver what you need,<br />
                 <span className="text-digital-blue">Achieve what you want</span>
               </h1>
@@ -32,7 +33,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative mt-12 md:mt-0">
+            <div className="relative mt-12">
               <div className="relative h-[400px] md:h-[450px] lg:h-[500px] rounded-[40px] bg-gray-100 overflow-hidden shadow-2xl border-8 border-white">
                 <img
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2670&auto=format&fit=crop"
@@ -132,7 +133,7 @@ export default function Home() {
       <section className="py-24 bg-white">
         <Container>
           <div className="text-center mb-20 space-y-4">
-            <span className="text-orange-500 font-bold uppercase tracking-[0.2em] text-[10px] md:text-xs">Dịch vụ chuyên nghiệp</span>
+            <span className="inline-flex items-center border transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent hover:bg-secondary/80 bg-warning/10 text-warning px-3 py-1 rounded-full text-sm font-medium mb-4">Dịch vụ chuyên nghiệp</span>
             <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
               Giải pháp <span className="text-digital-blue">Marketing</span> toàn diện
             </h2>
@@ -218,56 +219,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-            {[
-              {
-                name: "Ninh Tito",
-                niche: "Ẩm thực",
-                img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2574&auto=format&fit=crop",
-                rating: "4.9",
-                followers: "750K",
-                engagement: "10%",
-                views: "800K",
-                success: "98%",
-                platforms: ["youtube", "instagram", "facebook"],
-                tags: ["Food Review", "Travel", "Cooking"]
-              },
-              {
-                name: "An Nhiên",
-                niche: "Food Blogger",
-                img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2574&auto=format&fit=crop",
-                rating: "4.9",
-                followers: "950K",
-                engagement: "6.5%",
-                views: "250K",
-                success: "97%",
-                platforms: ["tiktok", "instagram", "youtube"],
-                tags: ["ẩm thực", "review quán ăn", "nấu ăn"]
-              },
-              {
-                name: "Tuấn Anh",
-                niche: "Tech Reviewer",
-                img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2570&auto=format&fit=crop",
-                rating: "5.0",
-                followers: "1.5M",
-                engagement: "4.8%",
-                views: "500K",
-                success: "98%",
-                platforms: ["youtube"],
-                tags: ["công nghệ", "review điện thoại", "đồ high-tech"]
-              },
-              {
-                name: "Phương Vy",
-                niche: "Travel",
-                img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2564&auto=format&fit=crop",
-                rating: "4.8",
-                followers: "780K",
-                engagement: "8.2%",
-                views: "200K",
-                success: "96%",
-                platforms: ["instagram", "youtube"],
-                tags: ["du lịch", "khám phá", "vlog"]
-              }
-            ].map((kol, idx) => (
+            {KOLS.slice(0, 4).map((kol, idx) => (
               <div key={idx} className="bg-white rounded-[40px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-gray-100 flex flex-col items-center hover:shadow-xl hover:shadow-blue-500/5 transition-all text-center">
                 <div className="relative mb-6">
                   <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
@@ -339,20 +291,20 @@ export default function Home() {
                     ))}
                   </div>
 
-                  <button className="w-full py-3 border border-gray-100 rounded-2xl text-xs font-black text-gray-900 flex items-center justify-center group/btn hover:bg-gray-50 transition-all mt-4">
+                  <Link href={`/kols/${kol.slug}`} className="w-full py-3 border border-gray-100 rounded-2xl text-xs font-black text-gray-900 flex items-center justify-center group/btn hover:bg-gray-50 transition-all mt-4">
                     Xem profile đầy đủ
                     <svg className="ml-2 w-3 h-3 translate-x-0 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="mt-16 text-center">
-            <button className="px-10 py-5 bg-digital-blue text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all text-sm uppercase tracking-widest flex items-center justify-center mx-auto">
+            <Link href="/kols" className="px-10 py-5 bg-digital-blue text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all text-sm uppercase tracking-widest inline-flex items-center justify-center mx-auto">
               Xem tất cả KOLs
               <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </button>
+            </Link>
           </div>
         </Container>
       </section>

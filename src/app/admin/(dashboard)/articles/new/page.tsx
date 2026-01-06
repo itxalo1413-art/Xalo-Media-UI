@@ -13,11 +13,24 @@ import {
     Sparkles,
     Settings
 } from 'lucide-react';
+import { toast } from 'sonner';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const CKEditor = dynamic(() => import('@/components/admin/CKEditor'), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-[400px] bg-gray-50 rounded-3xl animate-pulse flex items-center justify-center text-gray-400 font-bold">
+            Đang tải trình soạn thảo...
+        </div>
+    )
+});
 
 export default function NewArticlePage() {
     const [tags, setTags] = useState<string[]>(['TikTok', 'Marketing']);
     const [currentTag, setCurrentTag] = useState('');
+    const [content, setContent] = useState('');
+    const [excerpt, setExcerpt] = useState('');
 
     const addTag = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && currentTag.trim()) {
@@ -50,10 +63,16 @@ export default function NewArticlePage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="px-6 py-3 bg-white text-gray-900 font-black rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-sm uppercase tracking-widest">
+                    <button
+                        onClick={() => toast.info('Đã lưu bản nháp thành công!')}
+                        className="px-6 py-3 bg-white text-gray-900 font-black rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-sm uppercase tracking-widest"
+                    >
                         Lưu nháp
                     </button>
-                    <button className="flex items-center gap-2 px-8 py-3 bg-digital-blue text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all text-sm uppercase tracking-widest">
+                    <button
+                        onClick={() => toast.success('Đã xuất bản bài viết thành công!')}
+                        className="flex items-center gap-2 px-8 py-3 bg-digital-blue text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all text-sm uppercase tracking-widest"
+                    >
                         <Save className="w-5 h-5" />
                         Xuất bản bài viết
                     </button>
@@ -64,7 +83,7 @@ export default function NewArticlePage() {
                 {/* Content Area */}
                 <div className="lg:col-span-3 space-y-8">
                     {/* Editor Area */}
-                    <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm space-y-8">
+                    <div className="bg-white p-10 rounded-[20px] border border-gray-100 shadow-sm space-y-8">
                         <div className="space-y-4">
                             <input
                                 type="text"
@@ -79,28 +98,31 @@ export default function NewArticlePage() {
                             </div>
                         </div>
 
-                        {/* Rich Text Placeholder */}
-                        <div className="min-h-[500px] space-y-6">
+                        {/* Rich Text Editor */}
+                        <div className="min-h-[500px] space-y-8">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Tóm tắt (Excerpt)</label>
                                 <textarea
+                                    value={excerpt}
+                                    onChange={(e) => setExcerpt(e.target.value)}
                                     placeholder="Đoạn văn ngắn dẫn dắt cho bài viết..."
                                     className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-4 px-6 font-bold text-gray-900 focus:bg-white focus:border-digital-blue/30 outline-none transition-all min-h-[100px] resize-none"
                                 />
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Nội dung bài viết (HTML)</label>
-                                <textarea
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Nội dung bài viết</label>
+                                <CKEditor
+                                    value={content}
+                                    onChange={(data) => setContent(data)}
                                     placeholder="Bắt đầu viết nội dung ở đây..."
-                                    className="w-full bg-gray-50/50 border border-gray-100 rounded-3xl py-6 px-8 font-medium text-gray-700 focus:bg-white focus:border-digital-blue/30 outline-none transition-all min-h-[400px]"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* AI Generation Section (Article Specific) */}
-                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-10 rounded-[40px] border border-blue-100/50 shadow-sm space-y-8 relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-10 rounded-[20px] border border-blue-100/50 shadow-sm space-y-8 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-8 text-blue-200 opacity-20 group-hover:scale-110 transition-transform">
                             <Bot className="w-32 h-32" />
                         </div>
@@ -166,7 +188,7 @@ export default function NewArticlePage() {
                 {/* Sidebar */}
                 <div className="space-y-8">
                     {/* Publish Settings */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <h3 className="text-lg font-black text-gray-900 tracking-tight border-b border-gray-50 pb-4">Cài đặt</h3>
 
                         <div className="space-y-2">
@@ -187,7 +209,7 @@ export default function NewArticlePage() {
                     </div>
 
                     {/* Featured Image */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-blue-50 text-digital-blue rounded-xl">
                                 <ImageIcon className="w-5 h-5" />
@@ -201,7 +223,7 @@ export default function NewArticlePage() {
                     </div>
 
                     {/* Tags Section */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-green-50 text-green-600 rounded-xl">
                                 <TagIcon className="w-5 h-5" />
@@ -232,7 +254,7 @@ export default function NewArticlePage() {
                     </div>
 
                     {/* SEO Quick Settings */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-gray-50 text-gray-500 rounded-xl">
                                 <Search className="w-5 h-5" />

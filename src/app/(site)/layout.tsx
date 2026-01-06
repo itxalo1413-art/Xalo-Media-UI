@@ -1,5 +1,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import FloatingCTA from "@/components/layout/FloatingCTA";
+import { Toaster } from "sonner";
 
 export default function SiteLayout({
     children,
@@ -13,6 +15,8 @@ export default function SiteLayout({
                 {children}
             </main>
             <Footer />
+            <FloatingCTA />
+            <Toaster richColors position="bottom-right" />
         </>
     );
 }

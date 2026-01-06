@@ -50,7 +50,7 @@ export default function AdminServicesPage() {
             </div>
 
             {/* Filters and Search */}
-            <div className="bg-white p-4 rounded-[32px] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+            <div className="bg-white p-4 rounded-[16px] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
                 <div className="relative flex-1 w-full">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
@@ -69,7 +69,7 @@ export default function AdminServicesPage() {
             </div>
 
             {/* Services Table */}
-            <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-[20px] border border-gray-100 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
@@ -104,8 +104,8 @@ export default function AdminServicesPage() {
                                     </td>
                                     <td className="px-8 py-6">
                                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${service.isActive
-                                                ? 'bg-green-100 text-green-600 border-green-200'
-                                                : 'bg-gray-100 text-gray-400 border-gray-200'
+                                            ? 'bg-green-100 text-green-600 border-green-200'
+                                            : 'bg-gray-100 text-gray-400 border-gray-200'
                                             }`}>
                                             {service.isActive ? 'Hoạt động' : 'Tạm dừng'}
                                         </span>

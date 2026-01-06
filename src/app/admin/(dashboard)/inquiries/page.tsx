@@ -72,11 +72,11 @@ export default function AdminInquiriesPage() {
 
             {/* Filters and Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="md:col-span-1 bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex flex-col justify-center">
+                <div className="md:col-span-1 bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm flex flex-col justify-center">
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tổng yêu cầu bài này</p>
                     <p className="text-3xl font-black text-gray-900">48</p>
                 </div>
-                <div className="md:col-span-3 bg-white p-4 rounded-[32px] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+                <div className="md:col-span-3 bg-white p-4 rounded-[16px] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
                     <div className="relative flex-1 w-full">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
@@ -95,7 +95,7 @@ export default function AdminInquiriesPage() {
             </div>
 
             {/* CRM Table */}
-            <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-[20px] border border-gray-100 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>

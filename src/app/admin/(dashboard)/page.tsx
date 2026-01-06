@@ -35,7 +35,7 @@ export default function AdminDashboard() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat) => (
-                    <div key={stat.label} className="p-6 bg-white rounded-[32px] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                    <div key={stat.label} className="p-6 bg-white rounded-[16px] border border-gray-100 shadow-sm hover:shadow-md transition-all group">
                         <div className="flex items-center justify-between mb-4">
                             <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
                                 <stat.icon className="w-6 h-6" />
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
                         </Link>
                     </div>
 
-                    <div className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden">
+                    <div className="bg-white rounded-[16px] border border-gray-100 shadow-sm overflow-hidden">
                         <div className="divide-y divide-gray-50">
                             {recentInquiries.map((inquiry) => (
                                 <div key={inquiry.id} className="p-6 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
@@ -96,13 +96,13 @@ export default function AdminDashboard() {
                 <div className="space-y-6">
                     <h3 className="text-xl font-black text-gray-900 tracking-tight">Thao tác nhanh</h3>
                     <div className="grid grid-cols-1 gap-4">
-                        <Link href="/admin/services/new" className="p-6 bg-gradient-to-br from-digital-blue to-blue-700 rounded-[32px] text-white shadow-xl shadow-blue-500/20 hover:scale-[1.02] transition-all group">
+                        <Link href="/admin/services/new" className="p-6 bg-gradient-to-br from-digital-blue to-blue-700 rounded-[16px] text-white shadow-xl shadow-blue-500/20 hover:scale-[1.02] transition-all group">
                             <PlusCircle className="w-8 h-8 mb-4 opacity-80" />
                             <p className="font-black text-lg leading-tight">Thêm dịch vụ mới</p>
                             <p className="text-sm opacity-70 font-bold mt-1">Cập nhật danh mục sản phẩm</p>
                         </Link>
 
-                        <Link href="/admin/articles/new" className="p-6 bg-white rounded-[32px] border border-gray-100 shadow-sm hover:border-digital-blue/30 transition-all group">
+                        <Link href="/admin/articles/new" className="p-6 bg-white rounded-[16px] border border-gray-100 shadow-sm hover:border-digital-blue/30 transition-all group">
                             <PenLine className="w-8 h-8 text-digital-blue mb-4" />
                             <p className="font-black text-lg text-gray-900 leading-tight">Viết bài Blog</p>
                             <p className="text-sm text-gray-500 font-bold mt-1">Chia sẻ kiến thức marketing</p>

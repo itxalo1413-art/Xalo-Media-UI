@@ -13,10 +13,22 @@ import {
     Settings,
     Layers
 } from 'lucide-react';
+import { toast } from 'sonner';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const CKEditor = dynamic(() => import('@/components/admin/CKEditor'), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full h-[400px] bg-gray-50 rounded-3xl animate-pulse flex items-center justify-center text-gray-400 font-bold">
+            Đang tải trình soạn thảo...
+        </div>
+    )
+});
 
 export default function NewServicePage() {
     const [highlights, setHighlights] = useState([{ text: '', order: 0 }]);
+    const [content, setContent] = useState('');
 
     const addHighlight = () => setHighlights([...highlights, { text: '', order: highlights.length }]);
     const removeHighlight = (index: number) => setHighlights(highlights.filter((_, i) => i !== index));
@@ -38,10 +50,16 @@ export default function NewServicePage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="px-6 py-3 bg-white text-gray-900 font-black rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-sm uppercase tracking-widest">
+                    <button
+                        onClick={() => toast.info('Đã hủy thay đổi')}
+                        className="px-6 py-3 bg-white text-gray-900 font-black rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-sm uppercase tracking-widest"
+                    >
                         Hủy bỏ
                     </button>
-                    <button className="flex items-center gap-2 px-8 py-3 bg-digital-blue text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all text-sm uppercase tracking-widest">
+                    <button
+                        onClick={() => toast.success('Lưu dịch vụ thành công!')}
+                        className="flex items-center gap-2 px-8 py-3 bg-digital-blue text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all text-sm uppercase tracking-widest"
+                    >
                         <Save className="w-5 h-5" />
                         Lưu dịch vụ
                     </button>
@@ -52,7 +70,7 @@ export default function NewServicePage() {
                 {/* Main Form Area */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Basic Info Section */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 bg-blue-50 text-digital-blue rounded-xl">
                                 <Layout className="w-5 h-5" />
@@ -108,7 +126,7 @@ export default function NewServicePage() {
                     </div>
 
                     {/* Highlights Dynamic Section */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
@@ -147,17 +165,18 @@ export default function NewServicePage() {
                         </div>
                     </div>
 
-                    {/* Full Content Editor Placeholder */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    {/* Full Content Editor */}
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 bg-orange-50 text-orange-600 rounded-xl">
                                 <FileTextIcon className="w-5 h-5" />
                             </div>
-                            <h3 className="text-xl font-black text-gray-900 tracking-tight">Nội dung chi tiết (HTML)</h3>
+                            <h3 className="text-xl font-black text-gray-900 tracking-tight">Nội dung chi tiết</h3>
                         </div>
-                        <textarea
-                            placeholder="Nhập nội dung HTML cho trang chi tiết dịch vụ..."
-                            className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-4 px-6 font-mono text-sm text-gray-700 focus:bg-white focus:border-digital-blue/30 outline-none transition-all min-h-[300px]"
+                        <CKEditor
+                            value={content}
+                            onChange={(data) => setContent(data)}
+                            placeholder="Nhập nội dung cho trang chi tiết dịch vụ..."
                         />
                     </div>
                 </div>
@@ -165,7 +184,7 @@ export default function NewServicePage() {
                 {/* Sidebar Info Area */}
                 <div className="space-y-8">
                     {/* Status & Settings */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <h3 className="text-lg font-black text-gray-900 tracking-tight border-b border-gray-50 pb-4">Thiết lập</h3>
 
                         <div className="flex items-center justify-between">
@@ -195,7 +214,7 @@ export default function NewServicePage() {
                     </div>
 
                     {/* Stats Section */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-green-50 text-green-600 rounded-xl">
                                 <BarChart3 className="w-5 h-5" />
@@ -217,7 +236,7 @@ export default function NewServicePage() {
                     </div>
 
                     {/* SEO Settings */}
-                    <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-sm space-y-6">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-gray-50 text-gray-500 rounded-xl">
                                 <Search className="w-5 h-5" />
