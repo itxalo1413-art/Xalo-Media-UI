@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
   --color-digital-blue: #1E92F1;
   --color-primary: #1E92F1;
