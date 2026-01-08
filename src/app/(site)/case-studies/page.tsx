@@ -1,39 +1,8 @@
 import Container from '@/components/common/Container';
+import { CASE_STUDIES } from '@/data/caseStudies';
+import Link from 'next/link';
 
 export default function CaseStudies() {
-    const projects = [
-        {
-            brand: "Pediasure",
-            title: "KOC Seeding Campaign",
-            impact: "8M+ Reach, 2M+ Interactions",
-            description: "Chiến dịch phủ sóng mạnh mẽ với mạng lưới KOCs chất lượng cao."
-        },
-        {
-            brand: "Cỏ Mềm",
-            title: "Video Review Series",
-            impact: "20-25% Sales Increase",
-            description: "Sản xuất video tập trung vào USP, tối ưu hóa tỷ lệ chuyển đổi."
-        },
-        {
-            brand: "Mobifone",
-            title: "Premium Tech Solution",
-            impact: "High-end Light Show",
-            description: "Giải pháp Laser mapping và trình diễn ánh sáng đỉnh cao."
-        },
-        {
-            brand: "Lazada",
-            title: "Daily Livestream Operation",
-            impact: "Continuous Growth",
-            description: "Vận hành livestream bán hàng chuyên nghiệp hàng ngày."
-        },
-        {
-            brand: "Air Asia & Grab",
-            title: "Social Engagement",
-            impact: "Viral Social Content",
-            description: "Các chiến dịch truyền thông sáng tạo trên mạng xã hội."
-        }
-    ];
-
     return (
         <div className="py-24 min-h-screen">
             <Container>
@@ -45,33 +14,12 @@ export default function CaseStudies() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {[
-                        {
-                            category: "Thời trang",
-                            title: "Tăng Gấp Đôi Tỷ Lệ Chuyển Đổi Cho Thương Hiệu Thời Trang Nhờ Livestream",
-                            desc: "Một thương hiệu thời trang local brand đã chứng kiến sự tăng trưởng đột phá về doanh thu sau khi hợp tác với Xalo Media để tối ưu hóa các phiên livestream bán hàng trên TikTok và Facebook.",
-                            date: "30/08/2025",
-                            image: "https://images.unsplash.com/photo-1523381294911-8d3cead13475?q=80&w=2670&auto=format&fit=crop",
-                            slug: "tang-gap-doi-ty-le-chuyen-doi-nho-livestream"
-                        },
-                        {
-                            category: "Mỹ phẩm",
-                            title: "Chiến Dịch Ra Mắt Sản Phẩm Mới Cùng KOLs Đa Nền Tảng",
-                            desc: "Làm thế nào một thương hiệu mỹ phẩm mới có thể tạo ra tiếng vang lớn và đạt doanh số kỷ lục trong tuần đầu tiên ra mắt? Khám phá chiến lược kết hợp KOLs trên TikTok, Instagram và YouTube của chúng tôi.",
-                            date: "15/07/2025",
-                            image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=2574&auto=format&fit=crop",
-                            slug: "chien-dich-ra-mat-san-pham-moi-cung-kols"
-                        },
-                        {
-                            category: "Giáo dục & Công nghệ",
-                            title: "Xây Dựng Cộng Đồng 100,000 Thành Viên Cho Ứng Dụng Giáo Dục",
-                            desc: "Hành trình đưa một ứng dụng học tiếng Anh từ con số 0 đến việc sở hữu một cộng đồng người dùng sôi nổi và gắn kết trên Facebook và TikTok thông qua chiến dịch truyền thông đa kênh.",
-                            date: "02/06/2025",
-                            image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2670&auto=format&fit=crop",
-                            slug: "xay-dung-cong-dong-cho-ung-dung-giao-duc"
-                        }
-                    ].map((project, idx) => (
-                        <div key={idx} className="group flex flex-col h-full bg-white/60 backdrop-blur-md rounded-[40px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden">
+                    {CASE_STUDIES.map((project, idx) => (
+                        <Link 
+                            key={idx} 
+                            href={`/case-studies/${project.slug}`}
+                            className="group flex flex-col h-full bg-white/60 backdrop-blur-md rounded-[20px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-pointer"
+                        >
                             {/* Image Section */}
                             <div className="relative aspect-[16/10] overflow-hidden">
                                 <img
@@ -110,7 +58,7 @@ export default function CaseStudies() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </Container>

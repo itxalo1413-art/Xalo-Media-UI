@@ -9,7 +9,8 @@ import {
     FileText,
     Settings,
     LogOut,
-    ChevronRight
+    ChevronRight,
+    Users
 } from 'lucide-react';
 
 const navigation = [
@@ -17,6 +18,8 @@ const navigation = [
     { name: 'Dịch vụ', href: '/admin/services', icon: Briefcase },
     { name: 'Yêu cầu tư vấn', href: '/admin/inquiries', icon: MessageSquare },
     { name: 'Bài viết (Blog)', href: '/admin/articles', icon: FileText },
+    { name: 'KOLs', href: '/admin/kols', icon: Users },
+    { name: 'Tuyển dụng', href: '/admin/recruitment', icon: Briefcase }, // Briefcase is already imported
 ];
 
 export default function AdminSidebar() {

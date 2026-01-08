@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Container from '../common/Container';
+import { FacebookIcon, InstagramIcon } from 'lucide-react';
 
 const Footer = () => {
     return (
@@ -59,10 +60,9 @@ const Footer = () => {
                     <div>
                         <h3 className="text-lg font-semibold text-white mb-6 tracking-tight">Theo dõi chúng tôi</h3>
                         <ul className="space-y-3 text-sm mb-8">
-                            <li><a href="#" className="hover:text-digital-blue transition-colors">Facebook</a></li>
-                            <li><a href="#" className="hover:text-digital-blue transition-colors">Instagram</a></li>
-                            <li><a href="#" className="hover:text-digital-blue transition-colors">Youtube</a></li>
-                            <li><a href="#" className="hover:text-digital-blue transition-colors">Zalo</a></li>
+                            <li><a href="/https://www.facebook.com/xalomedia.vn" className="hover:text-digital-blue transition-colors"><FacebookIcon/></a></li>
+                            <li><a href="#" className="hover:text-digital-blue transition-colors"><InstagramIcon/></a></li>
+
                         </ul>
                         <div className="inline-block px-4 py-2 border border-gray-800 rounded-lg">
                             <div className="flex items-center text-xs font-bold text-white/50 space-x-2">
