@@ -12,6 +12,7 @@
     "@ckeditor/ckeditor5-react": "^11.0.1",
     "ckeditor5": "^47.3.0",
     "framer-motion": "^12.23.26",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
     "react": "19.2.3",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
