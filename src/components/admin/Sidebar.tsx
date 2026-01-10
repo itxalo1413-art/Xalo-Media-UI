@@ -32,7 +32,7 @@ export default function AdminSidebar() {
     try {
       const token = Cookies.get('accessToken');
 
-      await fetch('http://localhost:8080/api/v1/auth/logout', {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/logout`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
