@@ -2,16 +2,19 @@
 
 import { useState } from 'react';
 import Container from '@/components/common/Container';
+import { toast } from 'sonner';
 
 export default function ContactSection() {
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        name: '',
+        fullName: '',
         phone: '',
         email: '',
         company: '',
-        projectDetails: '',
-        budget: '',
-        services: [] as string[]
+        message: '',
+        budgetRange: '',
+        interestedServices: [] as string[],
+        consent: true // Always true for now as it's implied
     });
 
     const services = [
@@ -26,10 +29,51 @@ export default function ContactSection() {
     const handleServiceToggle = (service: string) => {
         setFormData(prev => ({
             ...prev,
-            services: prev.services.includes(service)
-                ? prev.services.filter(s => s !== service)
-                : [...prev.services, service]
+            interestedServices: prev.interestedServices.includes(service)
+                ? prev.interestedServices.filter(s => s !== service)
+                : [...prev.interestedServices, service]
         }));
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const res = await fetch('/api/v1/inquiries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                toast.success('Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ sớm.');
+                // Reset form
+                setFormData({
+                    fullName: '',
+                    phone: '',
+                    email: '',
+                    company: '',
+                    message: '',
+                    budgetRange: '',
+                    interestedServices: [],
+                    consent: true
+                });
+            } else {
+                toast.error(data.error?.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+            }
+        } catch (error) {
+            toast.error('Lỗi kết nối, vui lòng kiểm tra mạng.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -137,7 +181,7 @@ export default function ContactSection() {
                             <p className="text-gray-500 mt-2 font-bold">Điền thông tin bên dưới và chúng tôi sẽ liên hệ trong vòng 24 giờ</p>
                         </div>
 
-                        <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+                        <form className="space-y-8" onSubmit={handleSubmit}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-3">
                                     <label className="text-sm font-black text-black uppercase tracking-widest ml-1">Họ và tên *</label>
@@ -145,7 +189,9 @@ export default function ContactSection() {
                                         type="text"
                                         placeholder="Nguyễn Văn A"
                                         className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-300 focus:bg-white focus:border-digital-blue focus:ring-4 focus:ring-digital-blue/10 outline-none transition-all font-bold text-gray-900 placeholder:text-gray-400 hover:border-gray-400"
-                                        name="name"
+                                        name="fullName"
+                                        value={formData.fullName}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -156,6 +202,8 @@ export default function ContactSection() {
                                         placeholder="0123 456 789"
                                         className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-300 focus:bg-white focus:border-digital-blue focus:ring-4 focus:ring-digital-blue/10 outline-none transition-all font-bold text-gray-900 placeholder:text-gray-400 hover:border-gray-400"
                                         name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -169,6 +217,8 @@ export default function ContactSection() {
                                         placeholder="example@company.com"
                                         className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-300 focus:bg-white focus:border-digital-blue focus:ring-4 focus:ring-digital-blue/10 outline-none transition-all font-bold text-gray-900 placeholder:text-gray-400 hover:border-gray-400"
                                         name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -179,6 +229,8 @@ export default function ContactSection() {
                                         placeholder="Tên công ty"
                                         className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-300 focus:bg-white focus:border-digital-blue focus:ring-4 focus:ring-digital-blue/10 outline-none transition-all font-bold text-gray-900 placeholder:text-gray-400 hover:border-gray-400"
                                         name="company"
+                                        value={formData.company}
+                                        onChange={handleChange}
                                     />
                                 </div>
                             </div>
@@ -192,6 +244,7 @@ export default function ContactSection() {
                                                 <input
                                                     type="checkbox"
                                                     className="peer sr-only"
+                                                    checked={formData.interestedServices.includes(service)}
                                                     onChange={() => handleServiceToggle(service)}
                                                 />
                                                 <div className="w-6 h-6 rounded-lg border-2 border-gray-200 peer-checked:bg-digital-blue peer-checked:border-digital-blue transition-all" />
@@ -209,7 +262,12 @@ export default function ContactSection() {
 
                             <div className="space-y-3">
                                 <label className="text-sm font-black text-gray-900 uppercase tracking-widest ml-1">Ngân sách dự kiến</label>
-                                <select className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-300 focus:bg-white focus:border-digital-blue focus:ring-4 focus:ring-digital-blue/10 outline-none transition-all font-bold text-gray-900 appearance-none cursor-pointer hover:border-gray-400">
+                                <select 
+                                    className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-300 focus:bg-white focus:border-digital-blue focus:ring-4 focus:ring-digital-blue/10 outline-none transition-all font-bold text-gray-900 appearance-none cursor-pointer hover:border-gray-400"
+                                    name="budgetRange"
+                                    value={formData.budgetRange}
+                                    onChange={handleChange}
+                                >
                                     <option value="" className="text-gray-400">Chọn ngân sách</option>
                                     <option value="Dưới 50 triệu">Dưới 50 triệu</option>
                                     <option value="50 - 100 triệu">50 - 100 triệu</option>
@@ -223,18 +281,23 @@ export default function ContactSection() {
                                 <textarea
                                     placeholder="Chia sẻ thêm về mục tiêu, target audience, timeline và những yêu cầu đặc biệt..."
                                     className="w-full px-6 py-4 rounded-2xl bg-white border border-gray-300 focus:bg-white focus:border-digital-blue focus:ring-4 focus:ring-digital-blue/10 outline-none transition-all font-bold text-gray-900 placeholder:text-gray-400 hover:border-gray-400 min-h-[120px] resize-none"
-                                    name="projectDetails"
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
                                 />
                             </div>
 
                             <button
                                 type="submit"
+                                disabled={loading}
                                 className="w-full py-5 bg-digital-blue text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all text-sm uppercase tracking-widest flex items-center justify-center group/btn"
                             >
-                                Gửi yêu cầu tư vấn
-                                <svg className="ml-2 w-5 h-5 translate-x-0 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                </svg>
+                                {loading ? 'Đang gửi...' : 'Gửi yêu cầu tư vấn'}
+                                {!loading && (
+                                    <svg className="ml-2 w-5 h-5 translate-x-0 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                )}
                             </button>
 
                             <p className="text-center text-sm font-bold text-gray-500 pt-2">

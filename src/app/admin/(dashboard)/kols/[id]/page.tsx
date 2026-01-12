@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { getAccessToken } from '@/lib/auth';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 export default function EditKolPage() {
     const router = useRouter();
@@ -33,14 +35,18 @@ export default function EditKolPage() {
 
     const fetchKol = async (kolId: string) => {
         try {
-            const res = await fetch(`/api/v1/admin/kols/admin/${kolId}`);
+            const res = await fetch(`/api/v1/admin/kol/${kolId}`, {
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`
+                }
+            });
             const data = await res.json();
             if (data.success) {
-                const kol = data.data.kol;
+                const kol = data.data;
                 setFormData({
                     name: kol.name,
                     niche: kol.niche,
-                    avatar: kol.avatar,
+                    avatar: kol.img || kol.avatar || '',
                     followers: kol.followers,
                     engagement: kol.engagement,
                     rating: kol.rating,
@@ -66,11 +72,15 @@ export default function EditKolPage() {
         try {
             const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
             
-            const res = await fetch(`/api/v1/admin/kols/admin/${id}`, {
+            const res = await fetch(`/api/v1/admin/kol/${id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getAccessToken()}`
+                },
                 body: JSON.stringify({
                     ...formData,
+                    img: formData.avatar,
                     tags: tagsArray,
                     rating: Number(formData.rating)
                 })
@@ -124,7 +134,7 @@ export default function EditKolPage() {
                                     type="text"
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                 />
                             </div>
 
@@ -134,7 +144,7 @@ export default function EditKolPage() {
                                     type="text"
                                     value={formData.slug}
                                     onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                     placeholder="Leave empty to auto-generate"
                                 />
                             </div>
@@ -147,26 +157,17 @@ export default function EditKolPage() {
                                 type="text"
                                 value={formData.niche}
                                 onChange={e => setFormData({ ...formData, niche: e.target.value })}
-                                className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-900">Avatar URL <span className="text-red-500">*</span></label>
-                            <div className="flex gap-4 items-center">
-                                <input
-                                    required
-                                    type="url"
-                                    value={formData.avatar}
-                                    onChange={e => setFormData({ ...formData, avatar: e.target.value })}
-                                    className="flex-1 px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
-                                />
-                                {formData.avatar && (
-                                    <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200">
-                                        <img src={formData.avatar} alt="Preview" className="w-full h-full object-cover" />
-                                    </div>
-                                )}
-                            </div>
+                            <label className="text-sm font-bold text-gray-900">Avatar <span className="text-red-500">*</span></label>
+                            <ImageUpload
+                                value={formData.avatar}
+                                onChange={(url) => setFormData({ ...formData, avatar: url })}
+                                folder="xalomedia/kols"
+                            />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -177,7 +178,7 @@ export default function EditKolPage() {
                                     type="text"
                                     value={formData.followers}
                                     onChange={e => setFormData({ ...formData, followers: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                 />
                             </div>
                              <div className="space-y-2">
@@ -187,7 +188,7 @@ export default function EditKolPage() {
                                     type="text"
                                     value={formData.engagement}
                                     onChange={e => setFormData({ ...formData, engagement: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                 />
                             </div>
                              <div className="space-y-2">
@@ -199,7 +200,7 @@ export default function EditKolPage() {
                                     max="5"
                                     value={formData.rating}
                                     onChange={e => setFormData({ ...formData, rating: Number(e.target.value) })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                 />
                             </div>
                         </div>
@@ -210,7 +211,7 @@ export default function EditKolPage() {
                                     type="text"
                                     value={formData.tags}
                                     onChange={e => setFormData({ ...formData, tags: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                 />
                             </div>
                     </div>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { getAccessToken } from '@/lib/auth';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 export default function NewKolPage() {
     const router = useRouter();
@@ -27,14 +29,21 @@ export default function NewKolPage() {
         try {
             const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(Boolean);
             
-            const res = await fetch('/api/v1/admin/kols/admin', {
+            // Map form data to backend schema (img <- avatar)
+            const payload = {
+                ...formData,
+                img: formData.avatar,
+                tags: tagsArray,
+                rating: Number(formData.rating)
+            };
+
+            const res = await fetch('/api/v1/admin/kol', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    tags: tagsArray,
-                    rating: Number(formData.rating)
-                })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getAccessToken()}`
+                },
+                body: JSON.stringify(payload)
             });
 
             const data = await res.json();
@@ -83,7 +92,7 @@ export default function NewKolPage() {
                                     type="text"
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                     placeholder="Ví dụ: Ninh Titô"
                                 />
                             </div>
@@ -95,21 +104,18 @@ export default function NewKolPage() {
                                     type="text"
                                     value={formData.niche}
                                     onChange={e => setFormData({ ...formData, niche: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                     placeholder="Ví dụ: Food Review"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-gray-900">Avatar URL <span className="text-red-500">*</span></label>
-                            <input
-                                required
-                                type="url"
+                        <div className="space-y-4">
+                            <label className="text-sm font-bold text-gray-900">Avatar <span className="text-red-500">*</span></label>
+                            <ImageUpload
                                 value={formData.avatar}
-                                onChange={e => setFormData({ ...formData, avatar: e.target.value })}
-                                className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
-                                placeholder="https://..."
+                                onChange={(url) => setFormData({ ...formData, avatar: url })}
+                                folder="xalomedia/kols"
                             />
                         </div>
 
@@ -121,7 +127,7 @@ export default function NewKolPage() {
                                     type="text"
                                     value={formData.followers}
                                     onChange={e => setFormData({ ...formData, followers: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                     placeholder="Ví dụ: 850K"
                                 />
                             </div>
@@ -132,7 +138,7 @@ export default function NewKolPage() {
                                     type="text"
                                     value={formData.engagement}
                                     onChange={e => setFormData({ ...formData, engagement: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl text-gray-900 border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                     placeholder="Ví dụ: 5.2%"
                                 />
                             </div>
@@ -145,7 +151,7 @@ export default function NewKolPage() {
                                     max="5"
                                     value={formData.rating}
                                     onChange={e => setFormData({ ...formData, rating: Number(e.target.value) })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                 />
                             </div>
                         </div>
@@ -156,7 +162,7 @@ export default function NewKolPage() {
                                     type="text"
                                     value={formData.tags}
                                     onChange={e => setFormData({ ...formData, tags: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 text-gray-900 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-medium"
                                     placeholder="TikTok, YouTube, Review..."
                                 />
                             </div>

@@ -3,34 +3,51 @@
 import { Plus, Search, Edit2, Trash2, Eye, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
 
+// ... imports
+import { useState, useEffect } from 'react';
+import { getAccessToken } from '@/lib/auth';
+import { toast } from 'sonner';
+
 export default function AdminServicesPage() {
-    // Mock data based on Service model
-    const services = [
-        {
-            id: '1',
-            title: 'Influencer Marketing',
-            slug: 'influencer-marketing',
-            isActive: true,
-            order: 1,
-            shortDescription: 'Kết nối thương hiệu với KOLs/KOCs phù hợp.'
-        },
-        {
-            id: '2',
-            title: 'TikTok Management',
-            slug: 'tiktok-management',
-            isActive: true,
-            order: 2,
-            shortDescription: 'Xây dựng và phát triển kênh TikTok triệu view.'
-        },
-        {
-            id: '3',
-            title: 'Livestream Services',
-            slug: 'livestream-services',
-            isActive: false,
-            order: 3,
-            shortDescription: 'Giải pháp livestream bán hàng chuyên nghiệp.'
-        },
-    ];
+    const [services, setServices] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all"); // all, active, inactive
+
+    const fetchServices = async () => {
+        try {
+            setLoading(true);
+            const token = getAccessToken();
+            const params = new URLSearchParams({ limit: "100" });
+            
+            if (searchTerm) params.append("q", searchTerm);
+            if (statusFilter === "active") params.append("isActive", "true");
+            if (statusFilter === "inactive") params.append("isActive", "false");
+
+            const res = await fetch(`/api/v1/admin/services?${params.toString()}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setServices(data.data.items || []);
+            } else {
+                console.error("Failed to fetch services", res.status);
+                toast.error("Không thể tải danh sách dịch vụ");
+            }
+        } catch (error) {
+            console.error("Error fetching services", error);
+            toast.error("Lỗi kết nối");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchServices();
+    }, [searchTerm, statusFilter]);
 
     return (
         <div className="space-y-8">
@@ -56,14 +73,20 @@ export default function AdminServicesPage() {
                     <input
                         type="text"
                         placeholder="Tìm kiếm dịch vụ..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-gray-50 border-none rounded-2xl py-3 pl-11 pr-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none"
                     />
                 </div>
                 <div className="flex items-center gap-2 w-full md:w-auto">
-                    <select className="bg-gray-50 border-none rounded-2xl py-3 px-6 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none flex-1 md:flex-none">
-                        <option>Tất cả trạng thái</option>
-                        <option>Đang hoạt động</option>
-                        <option>Tạm dừng</option>
+                    <select 
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="bg-gray-50 border-none rounded-2xl py-3 px-6 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none flex-1 md:flex-none"
+                    >
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="active">Đang hoạt động</option>
+                        <option value="inactive">Tạm dừng</option>
                     </select>
                 </div>
             </div>
@@ -82,49 +105,59 @@ export default function AdminServicesPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {services.map((service) => (
-                                <tr key={service.id} className="hover:bg-gray-50/50 transition-colors group">
-                                    <td className="px-8 py-6">
-                                        <span className="font-black text-gray-900">{service.order}</span>
-                                    </td>
-                                    <td className="px-8 py-6">
-                                        <div>
-                                            <p className="font-black text-gray-900 group-hover:text-digital-blue transition-colors">
-                                                {service.title}
-                                            </p>
-                                            <p className="text-sm font-bold text-gray-500 line-clamp-1 max-w-xs">
-                                                {service.shortDescription}
-                                            </p>
-                                        </div>
-                                    </td>
-                                    <td className="px-8 py-6">
-                                        <code className="text-[10px] font-black bg-gray-100 text-gray-500 px-2 py-1 rounded-lg">
-                                            /{service.slug}
-                                        </code>
-                                    </td>
-                                    <td className="px-8 py-6">
-                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${service.isActive
-                                            ? 'bg-green-100 text-green-600 border-green-200'
-                                            : 'bg-gray-100 text-gray-400 border-gray-200'
-                                            }`}>
-                                            {service.isActive ? 'Hoạt động' : 'Tạm dừng'}
-                                        </span>
-                                    </td>
-                                    <td className="px-8 py-6 text-right">
-                                        <div className="flex items-center gap-2">
-                                            <button className="p-2 hover:bg-blue-50 text-gray-400 hover:text-digital-blue rounded-xl transition-all">
-                                                <Edit2 className="w-4 h-4" />
-                                            </button>
-                                            <button className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                            <button className="p-2 hover:bg-gray-100 text-gray-400 hover:text-gray-900 rounded-xl transition-all">
-                                                <MoreVertical className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </td>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center py-8 text-gray-500">Đang tải dữ liệu...</td>
                                 </tr>
-                            ))}
+                            ) : services.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center py-8 text-gray-500">Không tìm thấy dịch vụ nào</td>
+                                </tr>
+                            ) : (
+                                services.map((service: any) => (
+                                    <tr key={service._id} className="hover:bg-gray-50/50 transition-colors group">
+                                        <td className="px-8 py-6">
+                                            <span className="font-black text-gray-900">{service.order ?? 0}</span>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <div>
+                                                <p className="font-black text-gray-900 group-hover:text-digital-blue transition-colors">
+                                                    {service.title}
+                                                </p>
+                                                <p className="text-sm font-bold text-gray-500 line-clamp-1 max-w-xs">
+                                                    {service.shortDescription}
+                                                </p>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <code className="text-[10px] font-black bg-gray-100 text-gray-500 px-2 py-1 rounded-lg">
+                                                /{service.slug}
+                                            </code>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${service.isActive
+                                                ? 'bg-green-100 text-green-600 border-green-200'
+                                                : 'bg-gray-100 text-gray-400 border-gray-200'
+                                                }`}>
+                                                {service.isActive ? 'Hoạt động' : 'Tạm dừng'}
+                                            </span>
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            <div className="flex items-center gap-2">
+                                                <Link href={`/admin/services/${service._id}`} className="p-2 hover:bg-blue-50 text-gray-400 hover:text-digital-blue rounded-xl transition-all">
+                                                    <Edit2 className="w-4 h-4" />
+                                                </Link>
+                                                <button className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all">
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                                <button className="p-2 hover:bg-gray-100 text-gray-400 hover:text-gray-900 rounded-xl transition-all">
+                                                    <MoreVertical className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

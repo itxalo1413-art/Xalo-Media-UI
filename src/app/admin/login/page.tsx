@@ -3,15 +3,40 @@
 import { useState } from 'react';
 import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { setAccessToken } from '@/lib/auth';
 export default function AdminLoginPage() {
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulation of login
-        setTimeout(() => setIsLoading(false), 2000);
+
+        try {
+            const res = await fetch('/api/v1/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                toast.success('Đăng nhập thành công!');
+                setAccessToken(data.data.accessToken);
+                router.push('/admin/articles');
+            } else {
+                toast.error(data.error?.message || 'Đăng nhập thất bại');
+            }
+        } catch (error) {
+            toast.error('Lỗi kết nối');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -45,6 +70,8 @@ export default function AdminLoginPage() {
                                 <input
                                     type="email"
                                     placeholder="admin@xalo.media"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/5 focus:bg-white focus:border-digital-blue/30 outline-none transition-all placeholder:text-gray-400"
                                     required
                                 />
@@ -61,6 +88,8 @@ export default function AdminLoginPage() {
                                 <input
                                     type="password"
                                     placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className="w-full bg-gray-50/50 border border-gray-100 rounded-2xl py-4 pl-12 pr-4 font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/5 focus:bg-white focus:border-digital-blue/30 outline-none transition-all placeholder:text-gray-400"
                                     required
                                 />

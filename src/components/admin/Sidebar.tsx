@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { removeAccessToken } from '@/lib/auth';
+import { toast } from 'sonner';
 import {
     LayoutDashboard,
     Briefcase,
@@ -24,6 +26,21 @@ const navigation = [
 
 export default function AdminSidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/v1/auth/logout', { method: 'POST' });
+            removeAccessToken();
+            toast.success('Đã đăng xuất');
+            router.push('/admin/login');
+        } catch (error) {
+            console.error('Logout failed', error);
+            // Force logout client-side anyway
+            removeAccessToken();
+            router.push('/admin/login');
+        }
+    };
 
     return (
         <aside className="w-72 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0">
@@ -66,12 +83,17 @@ export default function AdminSidebar() {
             <div className="p-4 border-t border-gray-50 space-y-2">
                 <Link
                     href="/admin/settings"
-                    className="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all group"
+                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all group ${
+                        pathname === '/admin/settings' 
+                            ? 'bg-blue-50 text-digital-blue' 
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
                 >
-                    <Settings className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
-                    <span className="font-bold text-sm">Cài đặt</span>
+                    <Settings className={`w-5 h-5 ${pathname === '/admin/settings' ? 'text-digital-blue' : 'text-gray-400 group-hover:text-gray-600'}`} />
+                    <span className={`font-bold text-sm ${pathname === '/admin/settings' ? 'font-black' : ''}`}>Cài đặt</span>
                 </Link>
                 <button
+                    onClick={handleLogout}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-red-500 hover:bg-red-50 transition-all group"
                 >
                     <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -81,3 +103,6 @@ export default function AdminSidebar() {
         </aside>
     );
 }
+
+// End of component
+

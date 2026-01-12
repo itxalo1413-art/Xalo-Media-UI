@@ -2,6 +2,7 @@
 
 import { Plus, Search, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
+import { getAccessToken } from '@/lib/auth';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -10,7 +11,7 @@ interface Kol {
     name: string;
     slug: string;
     niche: string;
-    avatar: string;
+    img: string;
     followers: string;
     isActive: boolean;
     order: number;
@@ -24,10 +25,14 @@ export default function AdminKolsPage() {
     const fetchKols = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`/api/v1/admin/kols?q=${query}&limit=100`);
+            const res = await fetch(`/api/v1/admin/kol?q=${query}&limit=100`, {
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`
+                }
+            });
             const data = await res.json();
             if (data.success) {
-                setKols(data.data.items);
+                setKols(data.data);
             }
         } catch (error) {
             toast.error('Không thể tải danh sách KOLs');
@@ -43,8 +48,11 @@ export default function AdminKolsPage() {
     const handleDelete = async (id: string) => {
         if (!confirm('Bạn có chắc chắn muốn xóa KOL này?')) return;
         try {
-            const res = await fetch(`/api/v1/admin/kols/admin/${id}`, {
+            const res = await fetch(`/api/v1/admin/kol/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`
+                }
             });
             const data = await res.json();
             if (data.success) {
@@ -114,7 +122,7 @@ export default function AdminKolsPage() {
                                 <tr key={kol._id} className="hover:bg-gray-50/50 transition-colors group">
                                     <td className="px-8 py-6">
                                         <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200">
-                                            <img src={kol.avatar} alt={kol.name} className="w-full h-full object-cover" />
+                                            <img src={kol.img} alt={kol.name} className="w-full h-full object-cover" />
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">

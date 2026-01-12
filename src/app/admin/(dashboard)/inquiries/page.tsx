@@ -1,44 +1,52 @@
 'use client';
 
-import { Search, Filter, Mail, Phone, Calendar, CheckCircle, Clock, XCircle, MoreVertical } from 'lucide-react';
+import { Search, Filter, Mail, Phone, Calendar, MoreVertical } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { getAccessToken } from '@/lib/auth';
+
+interface Inquiry {
+    _id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    company: string;
+    interestedServices: string[];
+    budgetRange: string;
+    status: string;
+    createdAt: string;
+    source: string;
+}
 
 export default function AdminInquiriesPage() {
-    // Mock data based on Inquiry model
-    const inquiries = [
-        {
-            id: '1',
-            fullName: 'Nguyễn Văn A',
-            email: 'vana@gmail.com',
-            phone: '0901234567',
-            company: 'Công ty TNHH Giải pháp số',
-            interestedServices: ['Influencer Marketing', 'TikTok Management'],
-            budgetRange: '50 - 100 triệu',
-            status: 'new',
-            createdAt: '2025-12-29T10:00:00Z',
-        },
-        {
-            id: '2',
-            fullName: 'Trần Thị B',
-            email: 'btran@yahoo.com',
-            phone: '0912345678',
-            company: 'Brand Fashion',
-            interestedServices: ['Livestream Services'],
-            budgetRange: 'Dưới 50 triệu',
-            status: 'contacted',
-            createdAt: '2025-12-28T14:30:00Z',
-        },
-        {
-            id: '3',
-            fullName: 'Lê Văn C',
-            email: 'cle@company.com',
-            phone: '0987654321',
-            company: 'Startup Tech',
-            interestedServices: ['Content Creation', 'Brand Partnership'],
-            budgetRange: 'Trên 500 triệu',
-            status: 'qualified',
-            createdAt: '2025-12-27T09:15:00Z',
-        },
-    ];
+    const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [query, setQuery] = useState('');
+    const [totalItems, setTotalItems] = useState(0);
+
+    const fetchInquiries = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch(`/api/v1/admin/inquiries?q=${query}&limit=100`, {
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                setInquiries(data.data.items);
+                setTotalItems(data.data.pagination.total);
+            }
+        } catch (error) {
+            toast.error('Không thể tải danh sách yêu cầu');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchInquiries();
+    }, [query]);
 
     const getStatusStyle = (status: string) => {
         switch (status) {
@@ -62,6 +70,30 @@ export default function AdminInquiriesPage() {
         }
     };
 
+    const updateStatus = async (id: string, newStatus: string) => {
+        try {
+            const res = await fetch(`/api/v1/admin/inquiries/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getAccessToken()}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+            const json = await res.json();
+            if (json.success) {
+                setInquiries(prev => prev.map(item => 
+                    item._id === id ? { ...item, status: newStatus } : item
+                ));
+                toast.success('Cập nhật trạng thái thành công');
+            } else {
+                toast.error('Cập nhật thất bại');
+            }
+        } catch (error) {
+            toast.error('Lỗi khi cập nhật trạng thái');
+        }
+    };
+
     return (
         <div className="space-y-8">
             {/* Header */}
@@ -73,8 +105,8 @@ export default function AdminInquiriesPage() {
             {/* Filters and Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="md:col-span-1 bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm flex flex-col justify-center">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tổng yêu cầu bài này</p>
-                    <p className="text-3xl font-black text-gray-900">48</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tổng yêu cầu</p>
+                    <p className="text-3xl font-black text-gray-900">{loading ? '...' : totalItems}</p>
                 </div>
                 <div className="md:col-span-3 bg-white p-4 rounded-[16px] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center">
                     <div className="relative flex-1 w-full">
@@ -82,6 +114,8 @@ export default function AdminInquiriesPage() {
                         <input
                             type="text"
                             placeholder="Tìm kiếm theo tên, email, công ty..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
                             className="w-full bg-gray-50 border-none rounded-2xl py-3 pl-11 pr-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none"
                         />
                     </div>
@@ -95,7 +129,7 @@ export default function AdminInquiriesPage() {
             </div>
 
             {/* CRM Table */}
-            <div className="bg-white rounded-[20px] border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-[20px] border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
@@ -109,8 +143,16 @@ export default function AdminInquiriesPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                            {inquiries.map((item) => (
-                                <tr key={item.id} className="hover:bg-gray-50/50 transition-colors group">
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={6} className="px-8 py-6 text-center text-gray-500">Đang tải...</td>
+                                </tr>
+                            ) : inquiries.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="px-8 py-6 text-center text-gray-500">Chưa có yêu cầu nào.</td>
+                                </tr>
+                            ) : inquiries.map((item) => (
+                                <tr key={item._id} className="hover:bg-gray-50/50 transition-colors group">
                                     <td className="px-8 py-6">
                                         <div>
                                             <p className="font-black text-gray-900 group-hover:text-digital-blue transition-colors">
@@ -145,9 +187,21 @@ export default function AdminInquiriesPage() {
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
-                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getStatusStyle(item.status)}`}>
-                                            {getStatusLabel(item.status)}
-                                        </span>
+                                        <select
+                                            value={item.status}
+                                            onChange={(e) => updateStatus(item._id, e.target.value)}
+                                            className={`
+                                                appearance-none cursor-pointer outline-none
+                                                px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border
+                                                ${getStatusStyle(item.status)}
+                                            `}
+                                        >
+                                            <option value="new">Mới</option>
+                                            <option value="contacted">Đã liên hệ</option>
+                                            <option value="qualified">Tiềm năng</option>
+                                            <option value="closed">Đã chốt</option>
+                                            <option value="spam">Spam</option>
+                                        </select>
                                     </td>
                                     <td className="px-8 py-6 text-right">
                                         <button className="p-2 hover:bg-gray-100 text-gray-400 hover:text-gray-900 rounded-xl transition-all">
