@@ -2,11 +2,50 @@ import Link from 'next/link';
 import Container from '@/components/common/Container';
 import FAQ from '@/components/home/FAQ';
 import ContactSection from '@/components/home/ContactSection';
-import { KOLS } from '@/data/kols';
 
-export default function Home() {
+// Define Interface
+interface KOL {
+  _id: string;
+  slug: string;
+  name: string;
+  img: string;
+  niche: string;
+  rating: number;
+  followers: string;
+  engagement: string;
+  views: string;
+  success: string;
+  platforms: string[];
+  tags: string[];
+}
+
+async function getFeaturedKols() {
+  try {
+    const res = await fetch('http://localhost:8081/api/v1/kol?limit=4', {
+      cache: 'no-store'
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data.data) ? data.data : (data.data?.items || []);
+  } catch (error) {
+    console.error('Failed to fetch KOLs:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const kols = await getFeaturedKols();
+
   return (
     <div className="flex flex-col gap-24 pb-20">
+      {/* ... previous content ... */}
+      {/* NOTE: I need to verify if the rest of the component structure remains intact. 
+          Since I cannot replace the whole file easily due to size restrictions in context sometimes,
+          I will target the specific import block first to change it, 
+          then I will target the usage block.
+          Wait, I can replace the logic at the top and the usage in the middle.
+       */}
+
       {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center overflow-hidden pt-20 pb-10">
         <Container>
@@ -219,7 +258,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-            {KOLS.slice(0, 4).map((kol, idx) => (
+            {kols.map((kol: KOL, idx: number) => (
               <div key={idx} className="bg-white rounded-[40px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-gray-100 flex flex-col items-center hover:shadow-xl hover:shadow-blue-500/5 transition-all text-center">
                 <div className="relative mb-6">
                   <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
@@ -284,7 +323,7 @@ export default function Home() {
                   </div>
 
                   <div className="flex flex-wrap justify-center gap-2">
-                    {kol.tags.map((tag, tIdx) => (
+                    {kol.tags.slice(0, 3).map((tag, tIdx) => (
                       <span key={tIdx} className="px-3 py-1 bg-gray-50 text-gray-400 font-bold text-[10px] rounded-full uppercase border border-gray-100">
                         {tag}
                       </span>

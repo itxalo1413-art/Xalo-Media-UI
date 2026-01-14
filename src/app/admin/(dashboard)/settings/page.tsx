@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { getAccessToken } from '@/lib/auth';
-import { Save, Info, Phone, Share2, Globe, MapPin } from 'lucide-react';
+import { Save, Info, Phone, Share2, Globe, MapPin, MessageSquare } from 'lucide-react';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 interface Settings {
     // General
@@ -28,6 +29,11 @@ interface Settings {
     defaultMetaTitle: string;
     defaultMetaDescription: string;
     defaultOgImage: string;
+
+    // Popup
+    popupActive: boolean;
+    popupImageUrl: string;
+    popupLinkUrl: string;
 }
 
 export default function AdminSettingsPage() {
@@ -48,7 +54,10 @@ export default function AdminSettingsPage() {
         instagram: '',
         defaultMetaTitle: '',
         defaultMetaDescription: '',
-        defaultOgImage: ''
+        defaultOgImage: '',
+        popupActive: false,
+        popupImageUrl: '',
+        popupLinkUrl: ''
     });
 
     useEffect(() => {
@@ -72,8 +81,11 @@ export default function AdminSettingsPage() {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setSettings(prev => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target;
+        setSettings(prev => ({ 
+            ...prev, 
+            [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value 
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -320,6 +332,54 @@ export default function AdminSettingsPage() {
                                 value={settings.defaultOgImage}
                                 onChange={handleChange}
                                 className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-bold text-gray-900"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Popup Configuration */}
+                <div className="bg-white p-8 rounded-[24px] border border-gray-100 shadow-sm space-y-6">
+                    <div className="flex items-center gap-3 pb-4 border-b border-gray-50">
+                        <div className="p-2 bg-pink-50 text-pink-600 rounded-xl">
+                            <MessageSquare className="w-5 h-5" />
+                        </div>
+                        <h3 className="text-lg font-black text-gray-900">Cấu hình Popup</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                name="popupActive"
+                                id="popupActive"
+                                checked={settings.popupActive}
+                                onChange={handleChange}
+                                className="w-5 h-5 rounded border-gray-300 text-digital-blue focus:ring-digital-blue"
+                            />
+                            <label htmlFor="popupActive" className="text-sm font-bold text-gray-900">
+                                Bật Popup quảng cáo
+                            </label>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Hình ảnh Popup</label>
+                            <ImageUpload
+                                value={settings.popupImageUrl}
+                                onChange={(url) => setSettings(prev => ({ ...prev, popupImageUrl: url }))}
+                                folder="popup"
+                            />
+                            <p className="text-xs text-gray-400">Kích thước đề xuất: 800x600px (hoặc tỷ lệ 4:3)</p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Đường dẫn khi click (Tùy chọn)</label>
+                            <input
+                                type="text"
+                                name="popupLinkUrl"
+                                value={settings.popupLinkUrl}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-digital-blue font-bold text-gray-900"
+                                placeholder="https://..."
                             />
                         </div>
                     </div>

@@ -1,22 +1,77 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from '@/components/common/Container';
-import { KOLS } from '@/data/kols';
 import { Users, Heart, Eye, CheckCircle, Tv, Tag, Star, ChevronLeft } from 'lucide-react';
 
-export async function generateStaticParams() {
-    return KOLS.map((kol) => ({
-        slug: kol.slug,
-    }));
+// Define Interface
+interface KOL {
+    _id: string;
+    slug: string;
+    name: string;
+    img: string; // Updated from avatar
+    niche: string;
+    rating: number;
+    followers: string;
+    engagement: string;
+    views: string;
+    success: string;
+    platforms: string[];
+    tags: string[];
+    description: string;
 }
 
-export default async function KolDetailPage({ params }: { params: { slug: string } }) {
-    const { slug } = await params;
-    const kol = KOLS.find((k) => k.slug === slug);
+async function getKol(slug: string): Promise<KOL | null> {
+    try {
+        const res = await fetch(`http://localhost:8081/api/v1/kol/${slug}`, {
+            cache: 'no-store'
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.data || null;
+    } catch (error) {
+        console.error('Failed to fetch KOL:', error);
+        return null;
+    }
+}
 
+// Fetch related KOLs (mock or real API call)
+async function getRelatedKols(currentSlug: string): Promise<KOL[]> {
+    try {
+        // Fetch valid list to show as related
+        // In real app, we might filter by niche. For now just get latest 4
+        const res = await fetch('http://localhost:8081/api/v1/kol?limit=5', { cache: 'no-store' });
+        if(!res.ok) return [];
+        const data = await res.json();
+        const items = Array.isArray(data.data) ? data.data : (data.data?.items || []);
+        return items.filter((k: KOL) => k.slug !== currentSlug).slice(0, 4);
+    } catch (e) {
+        return [];
+    }
+}
+
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params;
+    const kol = await getKol(params.slug);
+    if (!kol) return { title: 'KOL không tồn tại' };
+
+    return {
+        title: `${kol.name} - ${kol.niche} | Xa Lộ Media`,
+        description: kol.description,
+        openGraph: {
+            images: [kol.img || ''],
+        },
+    };
+}
+
+export default async function KolDetailPage(props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params;
+    const kol = await getKol(params.slug);
+    
     if (!kol) {
         notFound();
     }
+
+    const relatedKols = await getRelatedKols(kol.slug);
 
     return (
         <div className="min-h-screen bg-gray-50/50 pt-24 pb-16">
@@ -153,33 +208,35 @@ export default async function KolDetailPage({ params }: { params: { slug: string
             </Container>
 
             {/* Suggested KOLs Section */}
-            <section className="mt-24">
-                <Container>
-                    <div className="flex items-center justify-between mb-12">
-                        <h2 className="text-3xl font-black text-gray-900 tracking-tight">KOLs liên quan</h2>
-                        <Link href="/kols" className="text-digital-blue font-black text-sm uppercase tracking-widest hover:translate-x-1 transition-transform inline-flex items-center">
-                            Xem tất cả
-                            <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                        </Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {KOLS.filter(k => k.slug !== kol.slug).slice(0, 4).map((relatedKol, idx) => (
-                            <Link
-                                key={idx}
-                                href={`/kols/${relatedKol.slug}`}
-                                className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-xl transition-all text-center group"
-                            >
-                                <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-white shadow-lg group-hover:scale-105 transition-transform">
-                                    <img src={relatedKol.img} alt={relatedKol.name} className="w-full h-full object-cover" />
-                                </div>
-                                <h3 className="text-xl font-black text-gray-900 mb-1">{relatedKol.name}</h3>
-                                <p className="text-digital-blue font-bold text-[10px] uppercase tracking-widest">{relatedKol.niche}</p>
+            {relatedKols.length > 0 && (
+                <section className="mt-24">
+                    <Container>
+                        <div className="flex items-center justify-between mb-12">
+                            <h2 className="text-3xl font-black text-gray-900 tracking-tight">KOLs liên quan</h2>
+                            <Link href="/kols" className="text-digital-blue font-black text-sm uppercase tracking-widest hover:translate-x-1 transition-transform inline-flex items-center">
+                                Xem tất cả
+                                <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                             </Link>
-                        ))}
-                    </div>
-                </Container>
-            </section>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {relatedKols.map((relatedKol, idx) => (
+                                <Link
+                                    key={idx}
+                                    href={`/kols/${relatedKol.slug}`}
+                                    className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 flex flex-col items-center hover:shadow-xl transition-all text-center group"
+                                >
+                                    <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-white shadow-lg group-hover:scale-105 transition-transform">
+                                        <img src={relatedKol.img} alt={relatedKol.name} className="w-full h-full object-cover" />
+                                    </div>
+                                    <h3 className="text-xl font-black text-gray-900 mb-1">{relatedKol.name}</h3>
+                                    <p className="text-digital-blue font-bold text-[10px] uppercase tracking-widest">{relatedKol.niche}</p>
+                                </Link>
+                            ))}
+                        </div>
+                    </Container>
+                </section>
+            )}
         </div>
     );
 }

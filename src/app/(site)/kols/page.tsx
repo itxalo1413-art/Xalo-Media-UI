@@ -4,12 +4,19 @@ import Container from '@/components/common/Container';
 // Fetch data directly from backend (SSR)
 async function getKols() {
     try {
-        const res = await fetch('http://localhost:8080/api/v1/kols?limit=100', {
-            next: { revalidate: 60 } // Revalidate every 60 seconds
+        console.log('[KOLs] Fetching data...');
+        const res = await fetch('http://localhost:8081/api/v1/kol?limit=50', {
+            cache: 'no-store'
         });
-        if (!res.ok) return [];
+        if (!res.ok) {
+            console.error(`[KOLs] Fetch failed: ${res.status} ${res.statusText}`);
+            return [];
+        }
         const data = await res.json();
-        return data.data.items || [];
+        // Handle response structure (data.data can be array or object with items)
+        const items = Array.isArray(data.data) ? data.data : (data.data?.items || []);
+        console.log(`[KOLs] Fetched ${items.length} kols`);
+        return items;
     } catch (error) {
         console.error('Failed to fetch KOLs:', error);
         return [];
@@ -71,7 +78,7 @@ export default async function KolsPage() {
                                 <div key={kol._id || kol.id} className="bg-white rounded-[40px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-gray-100 flex flex-col items-center hover:shadow-xl hover:shadow-blue-500/10 transition-all text-center group">
                                     <div className="relative mb-6">
                                         <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-500">
-                                            <img src={kol.avatar} alt={kol.name} className="w-full h-full object-cover" />
+                                            <img src={kol.img} alt={kol.name} className="w-full h-full object-cover" />
                                         </div>
                                         <div className="absolute top-0 -right-4 bg-digital-blue text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
                                             Verify

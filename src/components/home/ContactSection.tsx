@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Container from '@/components/common/Container';
 import { toast } from 'sonner';
 
@@ -16,6 +16,22 @@ export default function ContactSection() {
         interestedServices: [] as string[],
         consent: true // Always true for now as it's implied
     });
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch('/api/v1/settings');
+                const data = await res.json();
+                if (data.success) {
+                    setSettings(data.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch settings');
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const services = [
         'Influencer Marketing',
@@ -109,7 +125,7 @@ export default function ContactSection() {
                             </div>
                             <div>
                                 <p className="font-black text-lg text-gray-900">Hotline</p>
-                                <p className="text-gray-600 font-bold">+84 786 688 149</p>
+                                <p className="text-gray-600 font-bold">{settings?.phone || '+84 786 688 149'}</p>
                                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-0.5">Hỗ trợ 24/7</p>
                             </div>
                         </div>
@@ -122,7 +138,7 @@ export default function ContactSection() {
                             </div>
                             <div>
                                 <p className="font-black text-lg text-gray-900">Email</p>
-                                <p className="text-gray-600 font-bold">contact@xalo.media</p>
+                                <p className="text-gray-600 font-bold">{settings?.email || 'contact@xalo.media'}</p>
                                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-0.5">Phản hồi trong 2 giờ</p>
                             </div>
                         </div>
@@ -136,7 +152,7 @@ export default function ContactSection() {
                             </div>
                             <div>
                                 <p className="font-black text-lg text-gray-900">Địa chỉ</p>
-                                <p className="text-gray-600 font-bold leading-relaxed">250 Nguyễn Đình Chính, Phường Phú Nhuận, TP. Hồ Chí Minh</p>
+                                <p className="text-gray-600 font-bold leading-relaxed">{settings?.address || '250 Nguyễn Đình Chính, Phường Phú Nhuận, TP. Hồ Chí Minh'}</p>
                                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-0.5">Ghé thăm văn phòng</p>
                             </div>
                         </div>
@@ -149,7 +165,7 @@ export default function ContactSection() {
                             </div>
                             <div>
                                 <p className="font-black text-lg text-gray-900">Giờ làm việc</p>
-                                <p className="text-gray-600 font-bold">T2-T7: 8:00 - 18:00</p>
+                                <p className="text-gray-600 font-bold">{settings?.workingHours || 'T2-T7: 8:00 - 18:00'}</p>
                                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-0.5">Chủ nhật nghỉ</p>
                             </div>
                         </div>
@@ -159,7 +175,7 @@ export default function ContactSection() {
                                 <h4 className="text-2xl font-black mb-2">Cần hỗ trợ ngay?</h4>
                                 <p className="mb-8 opacity-90 font-bold">Chat trực tiếp với chuyên gia tư vấn</p>
                                 <a
-                                    href="https://zalo.me/0786688149"
+                                    href={settings?.zalo || "https://zalo.me/0786688149"}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center justify-center w-full py-4 bg-white text-digital-blue font-black rounded-2xl hover:bg-orange-500 hover:text-white transition-all shadow-lg"
@@ -301,7 +317,7 @@ export default function ContactSection() {
                             </button>
 
                             <p className="text-center text-sm font-bold text-gray-500 pt-2">
-                                Hoặc gọi ngay <a href="tel:+84 786 688 149" className="text-digital-blue hover:underline">+84 786 688 149</a> để được hỗ trợ trực tiếp
+                                Hoặc gọi ngay <a href={`tel:${settings?.phone || '+84 786 688 149'}`} className="text-digital-blue hover:underline">{settings?.phone || '+84 786 688 149'}</a> để được hỗ trợ trực tiếp
                             </p>
                         </form>
                     </div>

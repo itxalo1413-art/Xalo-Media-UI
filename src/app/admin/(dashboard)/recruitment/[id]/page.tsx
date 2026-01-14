@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { ChevronLeft, Save, Briefcase, MapPin, DollarSign, Calendar, FileText, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { getAccessToken } from '@/lib/auth';
 
 export default function EditRecruitmentPage() {
     const router = useRouter();
@@ -17,8 +18,8 @@ export default function EditRecruitmentPage() {
         title: '',
         department: '',
         location: '',
-        type: 'Full-time',
-        salary: '',
+        jobType: 'Full-time',
+        salaryRange: '',
         deadline: '',
         description: '',
         requirements: '',
@@ -29,24 +30,30 @@ export default function EditRecruitmentPage() {
     useEffect(() => {
         const fetchRecruitment = async () => {
             try {
-                const res = await fetch(`/api/v1/recruitment/admin/${id}`);
+                const token = getAccessToken();
+                const res = await fetch(`/api/v1/admin/recruitment/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 const data = await res.json();
                 if (data.success) {
-                    const item = data.data.recruitment;
+                    const item = data.data; // Fixed: API returns data directly, not nested in recruitment
                     setFormData({
                         title: item.title,
-                        department: item.department,
+                        department: item.department || '',
                         location: item.location,
-                        type: item.type,
-                        salary: item.salary,
-                        deadline: item.deadline ? new Date(item.deadline).toISOString().split('T')[0] : '',
+                        jobType: item.jobType || item.type || 'Full-time', // Falback for older records
+                        salaryRange: item.salaryRange || item.salary || '', // Fallback
+                        deadline: (item.deadline && !isNaN(new Date(item.deadline).getTime())) ? new Date(item.deadline).toISOString().split('T')[0] : '',
                         description: item.description,
-                        requirements: item.requirements,
-                        benefits: item.benefits,
+                        requirements: Array.isArray(item.requirements) ? item.requirements.join('\n') : item.requirements || '',
+                        benefits: Array.isArray(item.benefits) ? item.benefits.join('\n') : item.benefits || '',
                         isActive: item.isActive,
                     });
                 }
             } catch (error) {
+                console.error("Error fetching recruitment:", error);
                 toast.error('Không thể tải thông tin tin tuyển dụng');
                 router.push('/admin/recruitment');
             }
@@ -71,10 +78,23 @@ export default function EditRecruitmentPage() {
         setLoading(true);
 
         try {
-            const res = await fetch(`/api/v1/recruitment/admin/${id}`, {
+            const token = getAccessToken();
+            
+            // Transform data
+            const payload = {
+                ...formData,
+                deadline: formData.deadline || undefined,
+                requirements: formData.requirements.split('\n').filter(line => line.trim() !== ''),
+                benefits: formData.benefits.split('\n').filter(line => line.trim() !== '')
+            };
+
+            const res = await fetch(`/api/v1/admin/recruitment/${id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload),
             });
 
             const data = await res.json();
@@ -96,8 +116,12 @@ export default function EditRecruitmentPage() {
         setLoading(true);
 
         try {
-            const res = await fetch(`/api/v1/recruitment/admin/${id}`, {
+            const token = getAccessToken();
+            const res = await fetch(`/api/v1/admin/recruitment/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             if (res.ok) {
@@ -169,8 +193,8 @@ export default function EditRecruitmentPage() {
                                 <div>
                                     <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Loại hình</label>
                                     <select
-                                        name="type"
-                                        value={formData.type}
+                                        name="jobType"
+                                        value={formData.jobType}
                                         onChange={handleChange}
                                         className="w-full bg-gray-50 border-none rounded-2xl p-4 font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/10 outline-none appearance-none"
                                     >
@@ -204,8 +228,8 @@ export default function EditRecruitmentPage() {
                                         <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                         <input
                                             type="text"
-                                            name="salary"
-                                            value={formData.salary}
+                                            name="salaryRange"
+                                            value={formData.salaryRange}
                                             onChange={handleChange}
                                             placeholder="Thỏa thuận / 1000$..."
                                             className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-12 pr-4 font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/10 outline-none"

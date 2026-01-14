@@ -14,6 +14,7 @@ import {
     Calendar
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { getAccessToken } from '@/lib/auth';
 
 interface IRecruitment {
     _id: string;
@@ -21,8 +22,10 @@ interface IRecruitment {
     slug: string;
     department: string;
     location: string;
-    type: string;
-    salary: string;
+    jobType: string;    // Updated from type
+    salaryRange: string;// Updated from salary
+    type?: string;      // Legacy support
+    salary?: string;    // Legacy support
     deadline: string;
     isActive: boolean;
 }
@@ -34,10 +37,15 @@ export default function AdminRecruitmentPage() {
 
     const fetchRecruitments = async () => {
         try {
-            const res = await fetch(`/api/v1/recruitment/admin/list?limit=100&search=${searchTerm}`);
+            const token = getAccessToken();
+            const res = await fetch(`/api/v1/admin/recruitment?limit=100&search=${searchTerm}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
-                setRecruitments(data.data.items);
+                setRecruitments(data.data);
             }
         } catch (error) {
             console.error(error);
@@ -55,8 +63,12 @@ export default function AdminRecruitmentPage() {
         if (!confirm('Bạn có chắc chắn muốn xóa tin tuyển dụng này?')) return;
 
         try {
-            const res = await fetch(`/api/v1/recruitment/admin/${id}`, {
+            const token = getAccessToken();
+            const res = await fetch(`/api/v1/admin/recruitment/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
             
             if (res.ok) {
@@ -130,15 +142,15 @@ export default function AdminRecruitmentPage() {
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <Briefcase className="w-4 h-4" />
-                                            {job.department}
+                                            {job.department} • {job.jobType || job.type}
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <DollarSign className="w-4 h-4" />
-                                            {job.salary}
+                                            {job.salaryRange || job.salary}
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <Calendar className="w-4 h-4" />
-                                            Deadline: {new Date(job.deadline).toLocaleDateString('vi-VN')}
+                                            Deadline: {job.deadline ? new Date(job.deadline).toLocaleDateString('vi-VN') : 'Không thời hạn'}
                                         </div>
                                     </div>
                                 </div>

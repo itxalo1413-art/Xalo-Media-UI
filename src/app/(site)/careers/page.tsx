@@ -1,122 +1,82 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Container from '@/components/common/Container';
 
 export default function Careers() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
+    const [jobPostings, setJobPostings] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchJobs = async () => {
+            try {
+                const res = await fetch('/api/v1/recruitment');
+                const data = await res.json();
+                if (data.success) {
+                    // Map API data to UI structure
+                    const mappedJobs = data.data.map((job: any) => ({
+                        _id: job._id,
+                        title: job.title,
+                        location: job.location,
+                        type: job.jobType || job.type, // Handle both
+                        salary: job.salaryRange || job.salary,
+                        summary: job.description, // Use description as summary
+
+                        // Actually, logic: The previous UI used arrays for responsibilities. 
+                        // The API provided strict arrays for requirements and benefits.
+                        // For responsibilities (Mô tả), let's just assume Description is the text.
+                        // We will display description as a single paragraph or keep responsibilities empty if not applicable.
+                        // Wait, looking at the UI, Responsibilities is a LIST.
+                        // If API description is text, we can't easily make it a list unless we split by newline.
+                        // Let's try splitting description by newline for responsibilities.
+                        responsibilities: job.description ? job.description.split('\n').filter((line: string) => line.trim()) : [],
+                        requirements: job.requirements || [],
+                        benefits: job.benefits || [],
+                        jsonLd: {
+                             "@context": "https://schema.org",
+                            "@type": "JobPosting",
+                            "title": job.title,
+                            "description": job.description,
+                            "datePosted": job.createdAt,
+                            "validThrough": job.deadline,
+                             "employmentType": job.jobType === 'Full-time' ? 'FULL_TIME' : job.jobType === 'Part-time' ? 'PART_TIME' : 'OTHER',
+                            "hiringOrganization": {
+                                "@type": "Organization",
+                                "name": "Xa Lộ Media",
+                                "sameAs": "https://www.xalomedia.vn"
+                            },
+                             "jobLocation": {
+                                "@type": "Place",
+                                "address": {
+                                    "@type": "PostalAddress",
+                                    "addressLocality": job.location,
+                                    "addressCountry": "VN"
+                                }
+                            }
+                        }
+                    }));
+                    setJobPostings(mappedJobs);
+                }
+            } catch (error) {
+                console.error("Error loading jobs", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchJobs();
+    }, []);
 
     const toggleAccordion = (index: number) => {
         setOpenIndex(openIndex === index ? null : index);
     };
 
-    const jobPostings = [
-        {
-            title: "Chuyên viên Digital Marketing (Performance)",
-            location: "TP. Hồ Chí Minh",
-            type: "Toàn thời gian",
-            salary: "15 - 25 triệu",
-            summary: "Chúng tôi đang tìm kiếm một Digital Marketing Specialist giàu kinh nghiệm để dẫn dắt các chiến dịch Performance Marketing tại Xa Lộ Media. Bạn sẽ là người trực tiếp tối ưu hóa ngân sách và đảm bảo tỷ lệ chuyển đổi tốt nhất cho khách hàng.",
-            responsibilities: [
-                "Lên kế hoạch và triển khai các chiến dịch quảng cáo trả phí trên các nền tảng Google Ads, Facebook Ads, TikTok Ads.",
-                "Theo dõi, phân tích và tối ưu hóa hiệu quả của các chiến dịch để đạt được KPI về chi phí và chuyển đổi.",
-                "Báo cáo hiệu suất chiến dịch và đề xuất các giải pháp cải thiện.",
-                "Phối hợp với team content và design để sản xuất các tài liệu quảng cáo hiệu quả."
-            ],
-            requirements: [
-                "Có ít nhất 2 năm kinh nghiệm chạy quảng cáo performance marketing.",
-                "Thành thạo các công cụ Google Ads, Facebook Business Manager, TikTok Ads Manager.",
-                "Có khả năng phân tích số liệu và tư duy logic tốt.",
-                "Hiểu biết về SEO và các kênh digital marketing khác là một lợi thế.",
-                "Chủ động, sáng tạo và có tinh thần trách nhiệm cao."
-            ],
-            benefits: [
-                "Mức lương cạnh tranh và thưởng theo hiệu quả công việc.",
-                "Được làm việc trong môi trường năng động, chuyên nghiệp, tiếp xúc với các dự án lớn.",
-                "Cơ hội học hỏi và phát triển bản thân không giới hạn.",
-                "Đóng BHXH, BHYT đầy đủ theo quy định.",
-                "Du lịch công ty, team building hàng năm."
-            ],
-            jsonLd: {
-                "@context": "https://schema.org",
-                "@type": "JobPosting",
-                "title": "Chuyên viên Digital Marketing (Performance)",
-                "description": "Lên kế hoạch và triển khai các chiến dịch quảng cáo trả phí trên các nền tảng Google Ads, Facebook Ads, TikTok Ads...",
-                "datePosted": "2025-08-29",
-                "validThrough": "2025-10-29",
-                "employmentType": "FULL_TIME",
-                "hiringOrganization": {
-                    "@type": "Organization",
-                    "name": "Xa Lộ Media",
-                    "sameAs": "https://www.xalomedia.vn"
-                },
-                "jobLocation": {
-                    "@type": "Place",
-                    "address": {
-                        "@type": "PostalAddress",
-                        "addressLocality": "TP. Hồ Chí Minh",
-                        "addressCountry": "VN"
-                    }
-                },
-                "baseSalary": {
-                    "@type": "MonetaryAmount",
-                    "currency": "VND",
-                    "value": {
-                        "@type": "QuantitativeValue",
-                        "value": "15000000-25000000",
-                        "unitText": "MONTH"
-                    }
-                }
-            }
-        },
-        {
-            title: "Content Creator (Lĩnh vực Lifestyle)",
-            location: "Làm việc từ xa",
-            type: "Bán thời gian",
-            salary: "Thỏa thuận",
-            summary: "Bạn có đam mê sáng tạo nội dung? Bạn yêu thích Lifestyle và muốn chia sẻ những câu chuyện thú vị? Hãy gia nhập đội ngũ Content Creator của chúng tôi!",
-            responsibilities: [
-                "Sáng tạo nội dung (bài viết, hình ảnh, video ngắn) cho các kênh social media (Facebook, Instagram, TikTok).",
-                "Lên ý tưởng và xây dựng kế hoạch nội dung theo tuần/tháng.",
-                "Bắt trend và tạo ra các nội dung viral, thu hút tương tác.",
-                "Phối hợp với các bộ phận khác để đảm bảo tính nhất quán của thông điệp thương hiệu."
-            ],
-            requirements: [
-                "Có kinh nghiệm sản xuất nội dung trên các nền tảng mạng xã hội, đặc biệt là TikTok và Instagram.",
-                "Có gu thẩm mỹ tốt, khả năng quay dựng video cơ bản.",
-                "Sáng tạo, năng động, và luôn cập nhật các xu hướng mới nhất.",
-                "Có khả năng viết lách tốt, không sai lỗi chính tả.",
-                "Ưu tiên ứng viên đã có kênh social media cá nhân phát triển."
-            ],
-            benefits: [
-                "Thời gian làm việc linh hoạt, có thể làm việc từ xa.",
-                "Mức thu nhập hấp dẫn, tính theo dự án hoặc số lượng sản phẩm.",
-                "Cơ hội hợp tác với các nhãn hàng lớn.",
-                "Được tự do sáng tạo trong lĩnh vực mình yêu thích."
-            ],
-            jsonLd: {
-                "@context": "https://schema.org",
-                "@type": "JobPosting",
-                "title": "Content Creator (Lĩnh vực Lifestyle)",
-                "description": "Sáng tạo nội dung cho các kênh social media (Facebook, Instagram, TikTok)...",
-                "datePosted": "2025-08-29",
-                "validThrough": "2025-10-29",
-                "employmentType": "PART_TIME",
-                "hiringOrganization": {
-                    "@type": "Organization",
-                    "name": "Xa Lộ Media"
-                },
-                "jobLocation": {
-                    "@type": "Place",
-                    "address": {
-                        "@type": "PostalAddress",
-                        "addressLocality": "Remote",
-                        "addressCountry": "VN"
-                    }
-                }
-            }
-        }
-    ];
+    // Remove hardcoded jobPostings
+
+
+    // ]; // Removed hardcoded array end brackets
+
 
     return (
         <div className="py-24 min-h-screen">
@@ -179,7 +139,12 @@ export default function Careers() {
                     <section className="max-w-4xl mx-auto">
                         <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-12 text-center">Các vị trí đang tuyển dụng</h2>
                         <div className="space-y-4">
-                            {jobPostings.map((job, idx) => (
+                            {loading ? (
+                                <div className="text-center py-20 text-gray-400 font-bold">Đang tải danh sách công việc...</div>
+                            ) : jobPostings.length === 0 ? (
+                                <div className="text-center py-20 text-gray-400 font-bold">Hiện chưa có vị trí nào đang tuyển dụng.</div>
+                            ) : (
+                                jobPostings.map((job, idx) => (
                                 <div key={idx} className="bg-white rounded-[32px] border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-blue-100 group">
                                     <button
                                         onClick={() => toggleAccordion(idx)}
@@ -227,7 +192,7 @@ export default function Careers() {
                                                             Mô tả công việc
                                                         </h4>
                                                         <ul className="space-y-3">
-                                                            {job.responsibilities.map((item, i) => (
+                                                            {job.responsibilities.map((item: string, i: number) => (
                                                                 <li key={i} className="flex items-start gap-3 text-gray-600 font-medium bg-white p-3 rounded-xl border border-gray-100 hover:border-blue-200 transition-colors">
                                                                     <div className="w-1.5 h-1.5 rounded-full bg-digital-blue shrink-0 mt-2" />
                                                                     <span className="leading-relaxed">{item}</span>
@@ -245,7 +210,7 @@ export default function Careers() {
                                                             Yêu cầu công việc
                                                         </h4>
                                                         <ul className="space-y-3">
-                                                            {job.requirements.map((item, i) => (
+                                                            {job.requirements.map((item: string, i: number) => (
                                                                 <li key={i} className="flex items-start gap-3 text-gray-600 font-medium bg-white p-3 rounded-xl border border-gray-100 hover:border-orange-200 transition-colors">
                                                                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-2" />
                                                                     <span className="leading-relaxed">{item}</span>
@@ -264,7 +229,7 @@ export default function Careers() {
                                                         Quyền lợi
                                                     </h4>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                        {job.benefits.map((item, i) => (
+                                                        {job.benefits.map((item: string, i: number) => (
                                                             <div key={i} className="flex items-center gap-3 text-gray-600 font-medium bg-white p-4 rounded-xl border border-gray-100 hover:border-green-200 hover:shadow-sm transition-all">
                                                                 <div className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
                                                                 <span className="leading-relaxed">{item}</span>
@@ -289,7 +254,7 @@ export default function Careers() {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            )))}
                         </div>
                     </section>
                 </div>

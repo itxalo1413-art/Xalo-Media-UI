@@ -1,23 +1,36 @@
+import Link from 'next/link';
 import Container from '@/components/common/Container';
 
-export default function Blog() {
-    const posts = [
-        {
-            title: "Xu hướng Livestream 2024: Điều gì đang thay đổi?",
-            category: "Trends",
-            date: "Dec 20, 2024"
-        },
-        {
-            title: "Làm thế nào để chọn KOC phù hợp cho chiến dịch TikTok Shop?",
-            category: "Influencer",
-            date: "Dec 15, 2024"
-        },
-        {
-            title: "Bí quyết tăng tỷ lệ chuyển đổi trong Livestream bán hàng",
-            category: "Strategy",
-            date: "Dec 10, 2024"
+async function getArticles() {
+    try {
+        const res = await fetch('http://localhost:8081/api/v1/articles?limit=50', {
+            cache: 'no-store' // Disable cache for real-time updates
+        });
+        if (!res.ok) {
+            console.error(`[Blog] Fetch failed: ${res.status} ${res.statusText}`);
+            return [];
         }
-    ];
+        const data = await res.json();
+        const items = Array.isArray(data.data) ? data.data : (data.data?.items || data.data || []);
+        console.log(`[Blog] Fetched ${items.length} articles`);
+        return items;
+    } catch (error) {
+        console.error('Failed to fetch Articles:', error);
+        return [];
+    }
+}
+
+export default async function Blog() {
+    const articles = await getArticles();
+    
+    const posts = articles.map((article: any) => ({
+        title: article.title,
+        category: article.tags?.[0] || 'Tin tức', // Use first tag or default
+        date: new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        summary: article.excerpt || '',
+        image: article.featuredImageUrl || 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop', // Fallback
+        slug: article.slug
+    }));
 
     return (
         <div className="py-24 min-h-screen">
@@ -30,37 +43,11 @@ export default function Blog() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {[
-                        {
-                            title: "Xu hướng Livestream 2024: Điều gì đang thay đổi?",
-                            category: "Trends",
-                            date: "Dec 20, 2024",
-                            summary: "Livestream đang trở thành trung tâm của thương mại điện tử. Khám phá những thay đổi quan trọng trong hành vi người dùng và công nghệ livestream năm nay.",
-                            image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2670&auto=format&fit=crop"
-                        },
-                        {
-                            title: "Làm thế nào để chọn KOC phù hợp cho chiến dịch TikTok Shop?",
-                            category: "Influencer",
-                            date: "Dec 15, 2024",
-                            summary: "Chọn đúng KOC là yếu tố then chốt để bùng nổ doanh số trên TikTok Shop. Tìm hiểu bộ tiêu chí đánh giá KOC chất lượng và thực chiến.",
-                            image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=2574&auto=format&fit=crop"
-                        },
-                        {
-                            title: "Bí quyết tăng tỷ lệ chuyển đổi trong Livestream bán hàng",
-                            category: "Strategy",
-                            date: "Dec 10, 2024",
-                            summary: "Tỷ lệ chuyển đổi thấp là nỗi lo của nhiều nhà bán hàng. Áp dụng ngay 5 bí quyết tâm lý học khách hàng để chốt đơn thần tốc.",
-                            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop"
-                        },
-                        {
-                            title: "Xây dựng thương hiệu bền vững trên nền tảng số",
-                            category: "Branding",
-                            date: "Dec 05, 2024",
-                            summary: "Làm thế nào để giữ chân khách hàng trong kỷ nguyên bão hòa thông tin? Chiến lược tập trung vào giá trị cốt lõi và trải nghiệm người dùng.",
-                            image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2574&auto=format&fit=crop"
-                        }
-                    ].map((post, idx) => (
-                        <div key={idx} className="group flex flex-col h-full bg-white/60 backdrop-blur-md rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                    {posts.length === 0 ? (
+                         <div className="col-span-full text-center py-20 text-gray-500 font-bold">Đang cập nhật bài viết...</div>
+                    ) : (
+                        posts.map((post: any, idx: number) => (
+                        <Link href={`/blog/${post.slug}`} key={idx} className="group flex flex-col h-full bg-white/60 backdrop-blur-md rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                             {/* Image Section */}
                             <div className="relative h-48 overflow-hidden">
                                 <img
@@ -98,8 +85,9 @@ export default function Blog() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        </Link>
+                    ))
+                )}
                 </div>
             </Container>
         </div>

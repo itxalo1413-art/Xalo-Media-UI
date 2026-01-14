@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, Save, Briefcase, MapPin, DollarSign, Calendar, FileText } from 'lucide-react';
 import { toast } from 'sonner';
+import { getAccessToken } from '@/lib/auth';
 
 export default function NewRecruitmentPage() {
     const router = useRouter();
@@ -15,8 +16,8 @@ export default function NewRecruitmentPage() {
         title: '',
         department: '',
         location: '',
-        type: 'Full-time', // Default
-        salary: '',
+        jobType: 'Full-time', // Default
+        salaryRange: '',
         deadline: '',
         description: '',
         requirements: '',
@@ -38,10 +39,23 @@ export default function NewRecruitmentPage() {
         setLoading(true);
 
         try {
-            const res = await fetch('/api/v1/recruitment/admin', {
+            const token = getAccessToken();
+            
+            // Transform data for backend
+            const payload = {
+                ...formData,
+                deadline: formData.deadline || undefined, // Send undefined if empty
+                requirements: formData.requirements.split('\n').filter(line => line.trim() !== ''),
+                benefits: formData.benefits.split('\n').filter(line => line.trim() !== '')
+            };
+
+            const res = await fetch('/api/v1/admin/recruitment', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload),
             });
 
             const data = await res.json();
@@ -115,8 +129,8 @@ export default function NewRecruitmentPage() {
                                 <div>
                                     <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Loại hình</label>
                                     <select
-                                        name="type"
-                                        value={formData.type}
+                                        name="jobType"
+                                        value={formData.jobType}
                                         onChange={handleChange}
                                         className="w-full bg-gray-50 border-none rounded-2xl p-4 font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/10 outline-none appearance-none"
                                     >
@@ -150,8 +164,8 @@ export default function NewRecruitmentPage() {
                                         <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                         <input
                                             type="text"
-                                            name="salary"
-                                            value={formData.salary}
+                                            name="salaryRange"
+                                            value={formData.salaryRange}
                                             onChange={handleChange}
                                             placeholder="Thỏa thuận / 1000$..."
                                             className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-12 pr-4 font-bold text-gray-900 focus:ring-4 focus:ring-blue-500/10 outline-none"
