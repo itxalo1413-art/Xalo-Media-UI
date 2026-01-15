@@ -1,11 +1,23 @@
 import Link from 'next/link';
 import Container from '@/components/common/Container';
 
+import { env } from '@/lib/config';
+
+// Define filters
+const FILTERS = ['Tất cả', 'Ẩm thực', 'Tech Reviewer', 'Travel', 'Lifestyle', 'Fashion', 'Comedy', 'Dancer'];
+
 // Fetch data directly from backend (SSR)
-async function getKols() {
+async function getKols(niche?: string) {
     try {
-        console.log('[KOLs] Fetching data...');
-        const res = await fetch('http://localhost:8081/api/v1/kol?limit=50', {
+        console.log(`[KOLs] Fetching data... Niche: ${niche || 'All'}`);
+        // Construct URL with query params
+        const url = new URL(`${env.API_URL}/api/v1/kol`);
+        url.searchParams.set('limit', '50');
+        if (niche && niche !== 'Tất cả') {
+            url.searchParams.set('niche', niche);
+        }
+
+        const res = await fetch(url.toString(), {
             cache: 'no-store'
         });
         if (!res.ok) {
@@ -28,8 +40,14 @@ export const metadata = {
     description: 'Khám phá mạng lưới KOLs/KOCs hàng đầu tại Việt Nam hợp tác cùng Xa Lộ Media.',
 };
 
-export default async function KolsPage() {
-    const kols = await getKols();
+export default async function KolsPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+    const resolvedSearchParams = await searchParams;
+    const currentNiche = typeof resolvedSearchParams.niche === 'string' ? resolvedSearchParams.niche : undefined;
+    const kols = await getKols(currentNiche);
 
     return (
         <div className="flex flex-col gap-16 py-12 bg-gray-50/50">
@@ -51,27 +69,41 @@ export default async function KolsPage() {
                 </Container>
             </section>
 
-            {/* Filter Stats Section (Visual only for now) */}
+            {/* Filter Stats Section */}
             <section>
                 <Container>
                     <div className="flex flex-wrap gap-4 mb-8">
-                        {['Tất cả', 'Ẩm thực', 'Tech Reviewer', 'Travel', 'Lifestyle', 'Fashion', 'Comedy', 'Dancer'].map((item, idx) => (
-                            <button
-                                key={idx}
-                                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all border ${idx === 0
-                                    ? 'bg-digital-blue text-white border-digital-blue shadow-lg shadow-blue-500/20'
-                                    : 'bg-white text-gray-600 border-gray-100 hover:border-digital-blue/30 hover:bg-blue-50/30'
+                        {FILTERS.map((item, idx) => {
+                            const isSelected = item === 'Tất cả' 
+                                ? !currentNiche 
+                                : currentNiche === item;
+                            
+                            const href = item === 'Tất cả' 
+                                ? '/kols' 
+                                : `/kols?niche=${encodeURIComponent(item)}`;
+
+                            return (
+                                <Link
+                                    key={idx}
+                                    href={href}
+                                    className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all border inline-block ${
+                                        isSelected
+                                        ? 'bg-digital-blue text-white border-digital-blue shadow-lg shadow-blue-500/20'
+                                        : 'bg-white text-gray-600 border-gray-100 hover:border-digital-blue/30 hover:bg-blue-50/30'
                                     }`}
-                            >
-                                {item}
-                            </button>
-                        ))}
+                                >
+                                    {item}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {kols.length === 0 ? (
                             <div className="col-span-full text-center py-20 text-gray-500 font-medium">
-                                Đang cập nhật danh sách KOLs...
+                                {currentNiche 
+                                    ? `Không tìm thấy KOLs nào thuộc danh mục "${currentNiche}"`
+                                    : 'Đang cập nhật danh sách KOLs...'}
                             </div>
                         ) : (
                             kols.map((kol: any) => (

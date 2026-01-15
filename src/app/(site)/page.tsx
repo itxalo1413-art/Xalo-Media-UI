@@ -19,9 +19,11 @@ interface KOL {
   tags: string[];
 }
 
+import { env } from '@/lib/config';
+
 async function getFeaturedKols() {
   try {
-    const res = await fetch('http://localhost:8081/api/v1/kol?limit=4', {
+    const res = await fetch(`${env.API_URL}/api/v1/kol?limit=4`, {
       cache: 'no-store'
     });
     if (!res.ok) return [];
