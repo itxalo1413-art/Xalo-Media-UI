@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from '@/components/common/Container';
+import { env } from '@/lib/config';
 
 // Define Interface
 interface Article {
@@ -22,7 +23,7 @@ interface Article {
 
 async function getArticle(slug: string): Promise<Article | null> {
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/articles/${slug}`, {
+        const res = await fetch(`${env.API_URL}/api/v1/articles/${slug}`, {
             cache: 'no-store'
         });
         

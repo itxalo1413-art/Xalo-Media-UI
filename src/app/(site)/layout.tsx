@@ -1,3 +1,4 @@
+import { env } from "@/lib/config";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingCTA from "@/components/layout/FloatingCTA";
@@ -6,7 +7,7 @@ import Popup from "@/components/Popup";
 
 async function getSettings() {
     try {
-        const res = await fetch('http://localhost:8081/api/v1/settings', {
+        const res = await fetch(`${env.API_URL}/api/v1/settings`, {
             next: { revalidate: 60 }
         });
         const data = await res.json();

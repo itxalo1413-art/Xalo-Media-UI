@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Container from '@/components/common/Container';
 import { Users, Heart, Eye, CheckCircle, Tv, Tag, Star, ChevronLeft } from 'lucide-react';
+import { env } from '@/lib/config';
 
 // Define Interface
 interface KOL {
@@ -22,7 +23,7 @@ interface KOL {
 
 async function getKol(slug: string): Promise<KOL | null> {
     try {
-        const res = await fetch(`http://localhost:8081/api/v1/kol/${slug}`, {
+        const res = await fetch(`${env.API_URL}/api/v1/kol/${slug}`, {
             cache: 'no-store'
         });
         if (!res.ok) return null;
@@ -39,7 +40,7 @@ async function getRelatedKols(currentSlug: string): Promise<KOL[]> {
     try {
         // Fetch valid list to show as related
         // In real app, we might filter by niche. For now just get latest 4
-        const res = await fetch('http://localhost:8081/api/v1/kol?limit=5', { cache: 'no-store' });
+        const res = await fetch(`${env.API_URL}/api/v1/kol?limit=5`, { cache: 'no-store' });
         if(!res.ok) return [];
         const data = await res.json();
         const items = Array.isArray(data.data) ? data.data : (data.data?.items || []);

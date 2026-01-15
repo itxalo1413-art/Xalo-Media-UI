@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import Container from '../common/Container';
 import { FacebookIcon, InstagramIcon, Youtube, Globe, Phone, Mail, MapPin } from 'lucide-react';
+import { env } from '@/lib/config';
 
 async function getSettings() {
     try {
-        const res = await fetch('http://localhost:8081/api/v1/settings', {
+        const res = await fetch(`${env.API_URL}/api/v1/settings`, {
             next: { revalidate: 60 } // Cache for 1 minute
         });
         const data = await res.json();

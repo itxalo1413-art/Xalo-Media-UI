@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import Container from '@/components/common/Container';
+import { env } from '@/lib/config';
 
 async function getArticles() {
     try {
-        const res = await fetch('http://localhost:8081/api/v1/articles?limit=50', {
+        const res = await fetch(`${env.API_URL}/api/v1/articles?limit=50`, {
             cache: 'no-store' // Disable cache for real-time updates
         });
         if (!res.ok) {
