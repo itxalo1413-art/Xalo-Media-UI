@@ -1,3 +1,3 @@
 export const env = {
-  API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081',
+  API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://api.xalomedia.vn',
 };

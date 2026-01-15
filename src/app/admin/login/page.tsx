@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
             if (res.ok && data.success) {
                 toast.success('Đăng nhập thành công!');
                 setAccessToken(data.data.accessToken);
-                router.push('/admin/articles');
+                router.push('/admin');
             } else {
                 toast.error(data.error?.message || 'Đăng nhập thất bại');
             }
