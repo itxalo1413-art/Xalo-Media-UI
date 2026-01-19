@@ -1,0 +1,160 @@
+HƯỚNG DẪN SỬ DỤNG TRANG QUẢN TRỊ (ADMIN) - XALO MEDIA
+
+Tài liệu này hướng dẫn chi tiết cách sử dụng các chức năng trong trang quản trị của website Xalo Media.
+
+MỤC LỤC
+1. Tổng quan & Đăng nhập
+2. Dashboard (Trang chủ)
+3. Quản lý Bài viết (Blog)
+4. Quản lý Dịch vụ
+5. Quản lý Tuyển dụng
+6. Quản lý KOLs
+7. Quản lý Yêu cầu tư vấn (CRM)
+8. Cài đặt hệ thống
+
+---
+
+1. TỔNG QUAN & ĐĂNG NHẬP
+- Trang quản trị (Admin Panel) là nơi quản lý toàn bộ nội dung hiển thị trên website chính và xử lý các dữ liệu khách hàng gửi về.
+- Để truy cập, vui lòng vào đường dẫn: [website]/admin/login
+- Nhập Email và Mật khẩu được cấp để đăng nhập.
+
+---
+
+2. DASHBOARD (TRANG CHỦ)
+Sau khi đăng nhập thành công, bạn sẽ thấy giao diện Dashboard tổng quan.
+
+* Các thành phần chính:
+  - Thống kê nhanh: Hiển thị 4 thẻ số liệu quan trọng:
+    + Yêu cầu mới: Số lượng khách hàng mới cần liên hệ.
+    + Dịch vụ: Tổng số dịch vụ đang hoạt động.
+    + Bài viết: Tổng số bài blog đã xuất bản.
+    + Lượt xem: Tổng lượt xem của toàn bộ bài viết.
+  
+  - Yêu cầu tư vấn mới: Danh sách các khách hàng vừa gửi yêu cầu, hiển thị Tiên, Dịch vụ quan tâm và Trạng thái. Bấm "Xem tất cả" để vào trang quản lý chi tiết.
+  
+  - Thao tác nhanh: Các nút tắt để "Thêm dịch vụ mới" hoặc "Viết bài Blog" ngay lập tức.
+
+---
+
+3. QUẢN LÝ BÀI VIẾT (BLOG)
+Truy cập: Menu bên trái -> Chọn "Articles" (Bài viết).
+
+A. Danh sách bài viết:
+- Bộ lọc & Tìm kiếm:
+  + Ô tìm kiếm: Nhập tiêu đề bài viết để tìm nhanh.
+  + Bộ lọc trạng thái: Chọn "Đã xuất bản" hoặc "Bản nháp".
+- Danh sách hiển thị: Tiêu đề, Tags, Số lượt xem, Trạng thái.
+- Thao tác: Bấm vào biểu tượng Bút chì để Sửa, Thùng rác để Xóa.
+
+B. Viết bài mới / Chỉnh sửa:
+- Bấm nút "Viết bài mới" ở góc trên bên phải.
+- Khu vực chính:
+  + Tiêu đề: Tên bài viết (bắt buộc).
+  + Tóm tắt (Excerpt): Đoạn mô tả ngắn hiển thị dưới tiêu đề ở danh sách.
+  + Nội dung: Trình soạn thảo văn bản đầy đủ (CKEditor). Có thể chèn ảnh, định dạng văn bản như Word.
+  + AI Content Meta (Dưới cùng): Công cụ hỗ trợ viết bài bằng AI. Nhập chủ đề, từ khóa, chọn giọng văn, độ dài và bấm "Tạo nội dung" để AI tự động viết.
+- Cột bên phải:
+  + Cài đặt: Chọn trạng thái "Bản nháp" (lưu tạm) hoặc "Xuất bản" (hiển thị lên web).
+  + Nguồn: Chọn Manual (Tự viết) hoặc AI Gen (để đánh dấu).
+  + Ảnh đại diện: Dán đường dẫn (URL) ảnh bìa bài viết hoặc upload ảnh.
+  + Thẻ (Tags): Thêm các từ khóa liên quan (VD: marketing, tiktok). Nhập từ và bấm Enter.
+  + SEO Config: Nhập Meta Title và Meta Description để tối ưu hiển thị trên Google.
+- Lưu ý: Bấm "Lưu nháp" hoặc "Xuất bản bài viết" ở góc trên bên phải để hoàn tất.
+
+---
+
+4. QUẢN LÝ DỊCH VỤ
+Truy cập: Menu bên trái -> Chọn "Services" (Dịch vụ).
+
+A. Danh sách dịch vụ:
+- Tìm kiếm theo tên dịch vụ.
+- Bộ lọc: Đang hoạt động / Tạm dừng.
+- Cột hiển thị: Thứ tự, Tên dịch vụ, Slug (đường dẫn), Trạng thái.
+- Thao tác: Sửa, Xóa.
+
+B. Thêm mới / Chỉnh sửa:
+- Thông tin cơ bản:
+  + Tên dịch vụ: (VD: Influencer Marketing).
+  + Đường dẫn (Slug): Tự động tạo hoặc tự nhập (VD: influencer-marketing).
+  + Mô tả ngắn: 1-2 câu giới thiệu.
+  + Icon Key: Tên icon từ bộ thư viện Lucide (VD: users, trending-up).
+  + Thứ tự: Số thứ tự hiển thị trên trang chủ (1, 2, 3...).
+- Điểm nổi bật (Highlights): Bấm dấu (+) để thêm các dòng gạch đầu dòng về ưu điểm của dịch vụ.
+- Nội dung chi tiết: Soạn thảo nội dung bài giới thiệu chi tiết về dịch vụ.
+- Cột bên phải:
+  + Trạng thái: Bật/Tắt "Kích hoạt hiển thị".
+  + Ảnh Cover: Đường dẫn ảnh bìa.
+  + Số liệu thống kê: Nhập Giá trị (VD: 10M+) và Nhãn (VD: Reach) để hiển thị con số ấn tượng.
+  + Cấu hình SEO: Meta Title, Meta Description.
+
+---
+
+5. QUẢN LÝ TUYỂN DỤNG
+Truy cập: Menu bên trái -> Chọn "Recruitment" (Tuyển dụng).
+
+A. Danh sách tin:
+- Hiển thị các vị trí đang tuyển, địa điểm, mức lương, hạn nộp hồ sơ.
+- Trạng thái: Active (Hiện) / Hidden (Ẩn).
+
+B. Đăng tin mới:
+- Thông tin cơ bản: Tiêu đề, Phòng ban, Loại hình (Full-time...), Địa điểm, Mức lương, Hạn nộp.
+- Chi tiết công việc: 3 ô nhập liệu lớn cho "Mô tả công việc", "Yêu cầu ứng viên", "Quyền lợi".
+- Cột bên phải: Nút gạt Trạng thái (Hiển thị/Ẩn) và nút Lưu.
+
+---
+
+6. QUẢN LÝ KOLS
+Truy cập: Menu bên trái -> Chọn "KOLs".
+
+A. Danh sách KOLs:
+- Quản lý mạng lưới Influencer/KOLs của công ty.
+- Hiển thị: Avatar, Tên, Lĩnh vực, Lượng Follower.
+
+B. Thêm KOL mới:
+- Thông tin chung: Tên, Lĩnh vực (VD: Food, Beauty), Avatar (Upload ảnh).
+- Chỉ số: 
+  + Followers: Số lượng người theo dõi (VD: 850K).
+  + Engagement: Tỷ lệ tương tác (VD: 5.2%).
+  + Rating: Đánh giá (thang 5 sao).
+- Tags: Các nền tảng hoạt động (TikTok, YouTube...).
+- Trạng thái: Bật/Tắt hiển thị.
+
+---
+
+7. QUẢN LÝ YÊU CẦU TƯ VẤN (CRM)
+Truy cập: Menu bên trái -> Chọn "Inquiries" (Yêu cầu).
+
+- Đây là nơi nhận thông tin từ form liên hệ trên website.
+- Thống kê: Tổng số lượng yêu cầu.
+- Bảng dữ liệu:
+  + Khách hàng: Tên, Email, SĐT.
+  + Dịch vụ quan tâm: Danh sách dịch vụ khách chọn.
+  + Ngân sách & Thời gian gửi.
+  + Trạng thái: Có thể thay đổi trực tiếp tại cột này.
+    * Mới: Chưa xử lý.
+    * Đã liên hệ: Đã gọi/email cho khách.
+    * Tiềm năng: Khách có nhu cầu thực sự.
+    * Đã chốt: Đã ký hợp đồng.
+    * Spam: Tin rác.
+
+---
+
+8. CÀI ĐẶT HỆ THỐNG
+Truy cập: Menu bên trái -> Chọn "Settings" (Cài đặt).
+Chức năng này dùng để cấu hình các thông tin chung của toàn website.
+
+- Thông tin chung: Tên Website, Mô tả (dùng cho footer, SEO).
+- Thông tin liên hệ: Email, Hotline, Địa chỉ, Giờ làm việc, Link bản đồ Google Maps.
+- Mạng xã hội: Link các kênh Facebook, Zalo, TikTok... của công ty (hiển thị ở icon Social).
+- Cấu hình SEO mặc định: Dùng khi các trang con không có cấu hình riêng.
+- Cấu hình Popup:
+  + Bật/Tắt popup quảng cáo khi vào web.
+  + Upload ảnh Popup.
+  + Đường dẫn khi click vào ảnh (Link điều hướng).
+
+---
+LƯU Ý CHUNG:
+- Luôn kiểm tra kỹ nội dung trước khi bấm "Xuất bản" hoặc "Lưu".
+- Các trường có dấu sao (*) là bắt buộc.
+- Ảnh nên được nén dung lượng trước khi upload để web tải nhanh hơn.

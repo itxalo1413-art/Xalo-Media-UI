@@ -1,5 +1,7 @@
 'use client';
 
+import ImageUpload from '@/components/admin/ImageUpload';
+
 import { useState } from 'react';
 import {
     ChevronLeft,
@@ -297,16 +299,11 @@ export default function NewServicePage() {
                         <div className="space-y-4 pt-4">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ảnh Cover (URL)</label>
-                                <div className="relative group">
-                                    <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        value={coverImageUrl}
-                                        onChange={e => setCoverImageUrl(e.target.value)}
-                                        placeholder="https://..."
-                                        className="w-full bg-gray-50/50 border border-gray-100 rounded-xl py-3 pl-11 pr-4 text-xs font-bold text-gray-900 focus:bg-white transition-all"
-                                    />
-                                </div>
+                                <ImageUpload
+                                    value={coverImageUrl}
+                                    onChange={setCoverImageUrl}
+                                    folder="xalomedia/services"
+                                />
                             </div>
                         </div>
                     </div>
