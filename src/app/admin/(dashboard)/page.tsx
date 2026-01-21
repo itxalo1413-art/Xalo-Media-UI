@@ -12,10 +12,14 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { getAccessToken } from '@/lib/auth';
 
 export default function AdminDashboard() {
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
+
+
     const [data, setData] = useState<{
         stats: {
             inquiriesNew: number;
@@ -28,13 +32,29 @@ export default function AdminDashboard() {
     } | null>(null);
 
     useEffect(() => {
+        const accessToken = getAccessToken();
+
+        // 1. Kiểm tra token ngay lập tức
+        if (!accessToken) {
+            router.replace('/admin/login'); // Dùng replace để không lưu lại lịch sử trang admin cũ
+            return;
+        }
+
         const fetchData = async () => {
             try {
+                // Chỉ fetch data nếu có token
                 const res = await fetch('/api/v1/admin/dashboard/stats', {
                     headers: {
-                        Authorization: `Bearer ${getAccessToken()}`
+                        Authorization: `Bearer ${accessToken}`
                     }
                 });
+                
+                // 2. Kiểm tra nếu token hết hạn hoặc API trả về 401
+                if (res.status === 401) {
+                    router.replace('/admin/login');
+                    return;
+                }
+
                 const json = await res.json();
                 if (json.success) {
                     setData(json.data);
@@ -47,7 +67,19 @@ export default function AdminDashboard() {
         };
 
         fetchData();
-    }, []);
+    }, [router]);
+
+
+    if (loading && !data) {
+        return (
+            <div className="flex h-screen items-center justify-center bg-white">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+
+
+    if (!data) return null;
 
     const stats = [
         { 
